@@ -1,5 +1,5 @@
 """
-Azahar
+BioModelBuilder
 Described at PyMOL wiki: http://www.pymolwiki.org/index.php/Azahar
 
 Authors: Agustina Arroyuelo and Osvaldo Martin
@@ -38,14 +38,13 @@ def mainDialog():
     """ Creates the GUI """
 
     ################# Define some necessary functions #########################
-    def add():
+    def add(mol_name):
         """ 
         Takes the elements selected by the user with the GUI and uses
         them to write a matrix, which specifies the way residues are 
         bonded in the final molecule. It assigns an index and a name 
         to each residue and a bond to each pair. 
         """
-    
         residue0 = selected_res0.get()
         residue1 = selected_res1.get()
         bond = selected_bond.get()
@@ -53,9 +52,9 @@ def mainDialog():
         first = int(first_res.get())
         total = int(total_res.get())
 
-        if total == 0 and os.path.isfile('matrix.dat'):
-            os.remove("matrix.dat")
-        conectivity_matrix = open('matrix.dat', 'a') 
+        if total == 0 and os.path.isfile('%s_matrix.dat' % mol_name):
+            os.remove('%s_matrix.dat' % mol_name)
+        conectivity_matrix = open('%s_matrix.dat' % mol_name, 'a')
         
         for i in range(linear_residues):
             text = '%5s%30s%5s%30s%2s%2s\n' % (first+i, residue0, total+i+1, 
@@ -68,18 +67,23 @@ def mainDialog():
         conectivity_matrix.close()
     
         
-    def create():
+    def create(mol_name):
         """ create the defined molecule """
-        if os.path.isfile('matrix.dat'):
-            residues, bonds = read_input('matrix.dat')
-            builder(residues, bonds)
+        if os.path.isfile('%s_matrix.dat' % mol_name):
+            residues, bonds = read_input('%s_matrix.dat' % mol_name)
+            builder(residues, bonds, mol_name)
         else:
             tkMessageBox.showerror("FileNotFound", """You should add residues 
             \nbefore creating a molecule.""")
         to_state.set(cmd.count_states(sel0_value.get()))
         cmd.zoom()
-        cmd.util.chainbow('carb')
+        cmd.util.chainbow(mol_name)
 
+    def reset():
+        n_residues.set(1)
+        first_res.set(0)
+        total_res.set(0)  
+    
 
     def enable_disable():
         """enables the fields electrostatic and vdw cuttoff"""
@@ -160,18 +164,16 @@ def mainDialog():
     # Total number of residues, hidden
     total_res = StringVar(master=group.interior())
     total_res.set(0)
-#    # Matrix visualization area
-#    Label(group.interior(), text='matrix').grid(row=5, columnspan=2)
-#    text_mat = StringVar(master=group.interior())
-#    text_mat.set('')
-#    entry_text_mat = Entry(group.interior(), textvariable=text_mat, width=45)
-#    entry_text_mat.grid(row=6, columnspan=2)
-#    entry_text_mat.update()
+    Label(group.interior(), text='New molecule').grid(row=5, column=0)
+    name = StringVar(master=group.interior())
+    name.set('carb')
+    mol_name = Entry(group.interior(), textvariable=name, width=5)
+    mol_name.grid(row=5, column=1)
+    mol_name.update()
 
-
-    Button(p1, text="  add  ", command=add).pack()
-    Button(p1, text="create", command=create).pack()
-   
+    Button(p1, text="  add  ", command=lambda: add(mol_name.get())).pack(side=LEFT)
+    Button(p1, text="create", command=lambda: create(mol_name.get())).pack(side=LEFT)
+    Button(p1, text="reset", command=reset).pack(side=RIGHT)
     ############################ Visualization TAB #############################
     group = Pmw.Group(p2, tag_text='')
     group.pack(fill='both', expand=1, padx=5, pady=5)

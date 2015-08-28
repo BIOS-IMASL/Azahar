@@ -59,8 +59,8 @@ def r_gyration(selection='all', from_state=1, to_state=1,  visual=True, by_state
     selection: key word. Selects and object 
     from_state: int. First state to calculate RG
     to_state: int. Last state to calculate RG
-    visual:boolean. 
-    by_state:boolean.
+    visual: boolean. 
+    by_state: boolean.
     """
     fd = open('Rg.dat', 'w')
     radii = []
@@ -93,12 +93,9 @@ def r_gyration(selection='all', from_state=1, to_state=1,  visual=True, by_state
 
 
 def rama_plot(selection='all', from_state=1, to_state=1):
-#def rama_plot(selection='all', from_state=1, to_state=1,  visual=True):
     """ 
     Makes a scatter plot with the phi and psi angle pairs
-    """
-    
-            
+    """  
     first, last = pose_from_pdb(selection)
     bonds = get_glyco_bonds(first, last)
     
