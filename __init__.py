@@ -96,15 +96,16 @@ def mainDialog():
     ############################ Create the GUI ################################
     master = Tk()
     master.title("Azahar")
-    w = Tkinter.Label(master, text="\nLife is Sweet!\n",
+    w = Tkinter.Label(master, text="\nLife is Sweet.\n",
                                 background = 'black',
-                                foreground = 'white')
+                                foreground = 'dark orange',
+                                height=1)
     w.pack(expand=1, fill = 'both', padx=4, pady=4)  
     ############################ NoteBook ######################################
     Pmw.initialise()
-    nb = Pmw.NoteBook(master, hull_width=430, hull_height=320)
-    p1 = nb.add('Glycan Creation')
-    p2 = nb.add('Glycan Visualization')
+    nb = Pmw.NoteBook(master, hull_width=350, hull_height=260)
+    p1 = nb.add('Creation')
+    p2 = nb.add('Visualization')
     p3 = nb.add('Calculations')
     p4 = nb.add('    About   ')    
     nb.pack(padx=5, pady=5, fill=BOTH, expand=1)
@@ -113,18 +114,18 @@ def mainDialog():
     group.pack(fill='both', expand=1, padx=5, pady=5)
     # Select first residue
     selected_res0 = StringVar(master=group.interior())
-    selected_res0.set('a-D-glucosa')
-    residues_templates = ['a-D-glucosa' 'a-D-desoxi-ribosa', 'a-D-galactosa', 
-    'a-D-manosa', 'a-D-ribosa', 'b-D-galactosa', 'a-D-fructosa', 'a-D-glucosa',
-    'a-D-N-acetil-glucosamina', 'b-D-fructosa', 'b-D-glucosamina', 
-    'b-D-manosa']
+    selected_res0.set('a-D-glucose')
+    residues_templates = ['a-D-glucose' 'a-D-desoxy-ribose', 'a-D-galactose', 
+    'a-D-mannose', 'a-D-ribose', 'b-D-galactose', 'a-D-fructose', 'a-D-glucose',
+    'a-D-N-ace-glucosamine', 'b-D-fructose', 'b-D-glucosamine', 
+    'b-D-mannose']
  
     Pmw.OptionMenu(group.interior(),
                 labelpos = 'w',
                 label_text = 'Residue 1',
                 menubutton_textvariable = selected_res0,
                 items = residues_templates,
-                menubutton_width = 10,
+                menubutton_width = 18,
         ).grid(row=0, columnspan=2)
     # Select Bond
     selected_bond = StringVar(master=group.interior())
@@ -135,7 +136,7 @@ def mainDialog():
                 menubutton_textvariable = selected_bond,
                 items = ["(1,4)", "(1,6)", "(1,3)", "(1,2)", "(1,5)", "(1,1)",
                 "(6,1)", "(4,1)", "(3,1)", "(2,1)", "(5,1)"],
-                menubutton_width = 5,
+                menubutton_width = 18,
         ).grid(row=1, columnspan=2)
     # Select Second residue
     selected_res1 = StringVar(master=group.interior())
@@ -145,7 +146,7 @@ def mainDialog():
                 label_text = 'Residue 2',
                 menubutton_textvariable = selected_res1,
                 items = residues_templates,
-                menubutton_width = 10,
+                menubutton_width = 18,
         ).grid(row=2, columnspan=2)
     # Select Repetitions
     Label(group.interior(), text='Repetitions').grid(row=3, column=0)
@@ -179,7 +180,7 @@ def mainDialog():
     group.pack(fill='both', expand=1, padx=5, pady=5)
     Button(group.interior(), text="cartoon", command=cartoonize).pack()
     ############################Calculations TAB################################
-    group = Pmw.Group(p3, tag_text='Radius_of_gyration')
+    group = Pmw.Group(p3, tag_text='options')
     group.pack(fill='both', expand=1, padx=5, pady=5)
     
     Label(group.interior(), text='selection').grid(row=1, column=0)
@@ -218,16 +219,18 @@ def mainDialog():
     #entry_by_state.update()
     
 
-    Button(p3, text="Rg computation", command=lambda: r_gyration(sel0_value.get(), int(entry_from_state.get()), int(entry_to_state.get()),  vis_rg_value.get(), by_state_value.get())).pack()
-    Button(p3, text="Ramachandran plot", command=lambda: rama_plot(sel0_value.get(), int(entry_from_state.get()), int(entry_to_state.get()))).pack()
+    Button(p3, text="Rg computation", command=lambda: r_gyration(sel0_value.get(), int(entry_from_state.get()), int(entry_to_state.get()),  vis_rg_value.get(), by_state_value.get())).pack(side=LEFT)
+    Button(p3, text="Ramachandran plot", command=lambda: rama_plot(sel0_value.get(), int(entry_from_state.get()), int(entry_to_state.get()))).pack(side=RIGHT)
     ############################  About TAB   ################################## 
     group = Pmw.Group(p4, tag_text='About')
     group.pack(fill = 'both', expand=1, padx = 5, pady = 5)
-    text ="""This plugin was developed by Osvaldo Martin and
-Agustina Arroyuelo as part of the Warren L. DeLano
-Memorial PyMOL Open-Source Fellowship.
+    text ="""This plugin was developed by Agustina 
+Arroyuelo and Osvaldo Martin as part of the
+Warren L. DeLano Memorial PyMOL 
+Open-Source Fellowship.
 
-For instructions on how to use this plugin, please read
+For instructions on how to use this plugin, please
+read:
 http://www.pymolwiki.org/index.php/Azahar
 """
     interior_frame = Frame(group.interior())
