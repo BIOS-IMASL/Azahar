@@ -140,7 +140,7 @@ def mainDialog():
         ).grid(row=1, columnspan=2)
     # Select Second residue
     selected_res1 = StringVar(master=group.interior())
-    selected_res1.set("a-D-glucosa")
+    selected_res1.set("a-D-glucose")
     Pmw.OptionMenu(group.interior(),
                 labelpos = 'w',
                 label_text = 'Residue 2',
