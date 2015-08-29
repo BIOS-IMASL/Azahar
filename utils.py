@@ -105,8 +105,8 @@ def rama_plot(selection='all', from_state=1, to_state=1):
     psi = []
     for state in range(from_state, to_state+1):
         for element in con_matrix:
-            phi.append(get_phi(selection, element))
-            psi.append(get_psi(selection, element))
+            phi.append(get_phi(selection, element, state))
+            psi.append(get_psi(selection, element, state))
     
     plt.figure(figsize=(6,6))
     plt.scatter(phi, psi)
