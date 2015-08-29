@@ -115,7 +115,7 @@ def mainDialog():
     # Select first residue
     selected_res0 = StringVar(master=group.interior())
     selected_res0.set('a-D-glucose')
-    residues_templates = ['a-D-glucose' 'a-D-desoxy-ribose', 'a-D-galactose', 
+    residues_templates = ['a-D-glucose', 'a-D-desoxy-ribose', 'a-D-galactose', 
     'a-D-mannose', 'a-D-ribose', 'b-D-galactose', 'a-D-fructose', 'a-D-glucose',
     'a-D-N-ace-glucosamine', 'b-D-fructose', 'b-D-glucosamine', 
     'b-D-mannose']
