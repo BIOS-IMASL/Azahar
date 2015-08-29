@@ -6,7 +6,7 @@ Authors: Agustina Arroyuelo and Osvaldo Martin
 email: agustinaarroyuelo@gmail.com, aloctavodia@gmail.com
 Date: august 2015
 License: GNU General Public License
-Version 0.7
+Version 0.8
 """
  
  
