@@ -57,19 +57,19 @@ def builder(residues, bonds, mol_name):
     for i in range(0, len(residues)):
         res_name = residues[i]
         cmd.load(os.path.join(path, 'db_glycans', '%s.pdb' % res_name))
-        cmd.set_name('%s' % res_name, '%s' % i)  #rename object (necessary to avoid repeating names)
-        cmd.alter('%s' % i, 'resi = %s' % i)  #name residues for further referencing
-        cmd.sort()
+        cmd.set_name(res_name, i)  #rename object (necessary to avoid repeating names)
+        cmd.alter(i, 'resi = %s' % i)  #name residues for further referencing
+        cmd.sort(i)
     for i in range(0, len(bonds)):
         resi_i, resi_j, atom_i, atom_j = bonds[i][0], bonds[i][2], bonds[i][4], bonds[i][5]
         if atom_i > atom_j:
             cmd.remove('%s (resi %s and name O%s+H%so)' % (sel, resi_j, atom_j, atom_j))
             cmd.remove('%s (resi %s and name H%so)' % (sel, resi_i, atom_i))
-            cmd.fuse('%s (resi %s and name O%s)' % (sel, resi_i, atom_i), '%s (resi %s and name C%s)' % (sel, resi_j, atom_j))
+            cmd.fuse('%s (resi %s and name O%s)' % (sel, resi_i, atom_i), '%s (resi %s and name C%s)' % (sel, resi_j, atom_j), mode=2)
         else:
             cmd.remove('%s (resi %s and name O%s+H%so)' % (sel, resi_i, atom_i, atom_i))
             cmd.remove('%s (resi %s and name H%so)' % (sel, resi_j, atom_j))
-            cmd.fuse('%s (resi %s and name C%s)' % (sel, resi_i, atom_i), '%s (resi %s and name O%s)' % (sel, resi_j, atom_j))
+            cmd.fuse('%s (resi %s and name C%s)' % (sel, resi_i, atom_i), '%s (resi %s and name O%s)' % (sel, resi_j, atom_j), mode=2)
     cmd.copy(mol_name, '%s' % len(bonds))
     for i in range(0, len(residues)):
         cmd.delete('%s' % i)
