@@ -70,9 +70,9 @@ def builder(residues, bonds, mol_name):
             cmd.remove('%s (resi %s and name O%s+H%so)' % (sel, resi_i, atom_i, atom_i))
             cmd.remove('%s (resi %s and name H%so)' % (sel, resi_j, atom_j))
             cmd.fuse('%s (resi %s and name C%s)' % (sel, resi_i, atom_i), '%s (resi %s and name O%s)' % (sel, resi_j, atom_j), mode=2)
-    cmd.copy(mol_name, '%s' % len(bonds))
-    for i in range(0, len(residues)):
         cmd.delete('%s' % i)
+    cmd.copy(mol_name, '%s' % resi_j)
+    cmd.delete('%s' % resi_j)          
     for i in range(0, len(bonds)):
         set_phi(mol_name, bonds[i], -60)
         set_psi(mol_name, bonds[i], 120) 
