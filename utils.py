@@ -107,9 +107,11 @@ def rama_plot(selection='all', from_state=1, to_state=1):
         for element in con_matrix:
             phi.append(get_phi(selection, element, state))
             psi.append(get_psi(selection, element, state))
-    
-    plt.figure(figsize=(6,6))
-    plt.scatter(phi, psi)
+
+    gridsize = int(2*len(phi)**(1/3))
+    if gridsize < 36:
+        gridsize = 36
+    plt.hexbin(phi, psi, gridsize=gridsize, cmap=plt.cm.summer, mincnt=1)
     plt.xlabel('$\phi$', fontsize=16)
     plt.ylabel('$\psi$', fontsize=16, rotation=0)
     plt.xlim(-180, 180) 
