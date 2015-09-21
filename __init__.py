@@ -18,8 +18,10 @@ from pymol import cmd
 import os, sys
 import numpy as np
 
+
 path = os.path.dirname(__file__)
 sys.path.append(path)
+db_path = os.path.join(path, 'db_glycans')
 from BuildOligo import read_input, builder
 from cartoonize import cartoonize
 from utils import r_gyration, rama_plot
@@ -115,11 +117,9 @@ def mainDialog():
     # Select first residue
     selected_res0 = StringVar(master=group.interior())
     selected_res0.set('a-D-glucose')
-    residues_templates = ['a-D-glucose', 'a-D-desoxy-ribose', 'a-D-galactose', 
-    'a-D-mannose', 'a-D-ribose', 'b-D-galactose', 'a-D-fructose', 'a-D-glucose',
-    'a-D-N-ace-glucosamine', 'b-D-fructose', 'b-D-glucosamine', 
-    'b-D-mannose']
- 
+    
+    residues_templates = [os.path.splitext(x)[0] for x in os.listdir(db_path)]
+
     Pmw.OptionMenu(group.interior(),
                 labelpos = 'w',
                 label_text = 'Residue 1',
