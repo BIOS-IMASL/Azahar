@@ -17,15 +17,13 @@ import Pmw
 from pymol import cmd
 import os, sys
 import numpy as np
-
-
 path = os.path.dirname(__file__)
 sys.path.append(path)
 db_path = os.path.join(path, 'db_glycans')
 from BuildOligo import read_input, builder
 from cartoonize import cartoonize
 from utils import r_gyration, rama_plot
-#from SASA_SRA import main_frame
+from mcm import mcm_run
 
 
 def __init__(self):
@@ -109,7 +107,8 @@ def mainDialog():
     p1 = nb.add('Creation')
     p2 = nb.add('Visualization')
     p3 = nb.add('Calculations')
-    p4 = nb.add('    About   ')    
+    p4 = nb.add('Monte Carlo')
+    p10 = nb.add('    About   ')    
     nb.pack(padx=5, pady=5, fill=BOTH, expand=1)
     ############################ Creation TAB ##################################
     group = Pmw.Group(p1, tag_text='options')
@@ -221,8 +220,33 @@ def mainDialog():
 
     Button(p3, text="Rg computation", command=lambda: r_gyration(sel0_value.get(), int(entry_from_state.get()), int(entry_to_state.get()),  vis_rg_value.get(), by_state_value.get())).pack(side=LEFT)
     Button(p3, text="Ramachandran plot", command=lambda: rama_plot(sel0_value.get(), int(entry_from_state.get()), int(entry_to_state.get()))).pack(side=RIGHT)
+    ############################## MCM TAB ####################################
+    group = Pmw.Group(p4, tag_text='options')
+    group.pack(fill='both', expand=1, padx=5, pady=5)
+    # Selection
+    Label(group.interior(), text='molecule').grid(row=0, column=0)
+    molecule = StringVar(master=group.interior())
+    molecule.set('carb')
+    entry_molecule = Entry(group.interior(), textvariable=molecule, width=5)
+    entry_molecule.grid(row=0, column=1)
+    # Number of iteration
+    Label(group.interior(), text='Iterations').grid(row=1, column=0)
+    iterations = IntVar(master=group.interior())
+    iterations.set(10000)
+    entry_iterations = Entry(group.interior(), textvariable=iterations, width=5)
+    entry_iterations.grid(row=1, column=1)
+    # To Sasa or not to Sasa
+    Label(group.interior(), text='SASA').grid(row=2, column=0)    
+    sasa = BooleanVar(master=group.interior())
+    sasa.set(True)
+    entry_sasa = Checkbutton(group.interior(), variable=sasa)
+    entry_sasa.grid(row=2, column=1)
+    entry_sasa.configure(state='active')
+
+    Button(p4, text="Run MCM", command=lambda: mcm_run(entry_molecule.get(), int(entry_iterations.get()), bool(sasa.get()))).pack()
+
     ############################  About TAB   ################################## 
-    group = Pmw.Group(p4, tag_text='About')
+    group = Pmw.Group(p10, tag_text='About')
     group.pack(fill = 'both', expand=1, padx = 5, pady = 5)
     text ="""This plugin was developed by Agustina 
 Arroyuelo and Osvaldo Martin as part of the

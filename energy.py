@@ -2,8 +2,7 @@
 Functions to compute and optimize the energy of molecules
 """
 from __future__ import division
-import pymol
-from pymol import cmd, stored
+from pymol import cmd
 import openbabel as ob
 import numpy as np
 from scipy.spatial.distance import cdist 
