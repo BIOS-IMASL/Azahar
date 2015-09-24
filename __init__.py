@@ -103,7 +103,7 @@ def mainDialog():
     w.pack(expand=1, fill = 'both', padx=4, pady=4)  
     ############################ NoteBook ######################################
     Pmw.initialise()
-    nb = Pmw.NoteBook(master, hull_width=350, hull_height=260)
+    nb = Pmw.NoteBook(master, hull_width=400, hull_height=260)
     p1 = nb.add('Creation')
     p2 = nb.add('Visualization')
     p3 = nb.add('Calculations')
@@ -235,16 +235,25 @@ def mainDialog():
     iterations.set(10000)
     entry_iterations = Entry(group.interior(), textvariable=iterations, width=5)
     entry_iterations.grid(row=1, column=1)
-    # To Sasa or not to Sasa
+    # use solvent or not
     Label(group.interior(), text='SASA').grid(row=2, column=0)    
     sasa = BooleanVar(master=group.interior())
     sasa.set(True)
     entry_sasa = Checkbutton(group.interior(), variable=sasa)
     entry_sasa.grid(row=2, column=1)
     entry_sasa.configure(state='active')
-
-    Button(p4, text="Run MCM", command=lambda: mcm_run(entry_molecule.get(), int(entry_iterations.get()), bool(sasa.get()))).pack()
-
+    # randomize initial structure
+    Label(group.interior(), text='randomize').grid(row=3, column=0)    
+    randomize = BooleanVar(master=group.interior())
+    randomize.set(True)
+    entry_rnd = Checkbutton(group.interior(), variable=randomize)
+    entry_rnd.grid(row=3, column=1)
+    entry_rnd.configure(state='active')
+    Button(p4, text="Run MCM", command=lambda: mcm_run(entry_molecule.get(), 
+    int(entry_iterations.get()), 
+    bool(sasa.get()),
+    bool(randomize.get()),
+    )).pack()
     ############################  About TAB   ################################## 
     group = Pmw.Group(p10, tag_text='About')
     group.pack(fill = 'both', expand=1, padx = 5, pady = 5)
