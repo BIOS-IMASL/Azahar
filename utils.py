@@ -14,6 +14,14 @@ path = os.path.dirname(__file__)
 sys.path.append(path)
 from torsionals import get_phi, get_psi
 
+def analyse(type_analysis, selection, from_state, to_state,  visual, by_state):
+    if type_analysis == 'Rama scatter':
+        rama_plot(selection, from_state, to_state, scatter=True)
+    elif type_analysis == 'Rama hex':
+        rama_plot(selection, from_state, to_state, scatter=False)
+    elif type_analysis == ' Rg':
+        r_gyration(selection, from_state, to_state,  visual, by_state)
+
 
 def pose_from_pdb(pdb_file):
     """
@@ -92,7 +100,7 @@ def r_gyration(selection='all', from_state=1, to_state=1,  visual=True, by_state
         cmd.show("spheres", 'sphere_rg')
 
 
-def rama_plot(selection='all', from_state=1, to_state=1):
+def rama_plot(selection='all', from_state=1, to_state=1, scatter=True):
     """ 
     Makes a scatter plot with the phi and psi angle pairs
     """  
@@ -108,10 +116,15 @@ def rama_plot(selection='all', from_state=1, to_state=1):
             phi.append(get_phi(selection, element, state))
             psi.append(get_psi(selection, element, state))
 
-    gridsize = int(2*len(phi)**(1/3))
-    if gridsize < 36:
-        gridsize = 36
-    plt.hexbin(phi, psi, gridsize=gridsize, cmap=plt.cm.summer, mincnt=1)
+    if scatter:
+        plt.scatter(phi, psi)
+    else:
+        gridsize=100
+        #gridsize = int(2*len(phi)**(1/3))
+        #if gridsize < 36:
+        #    gridsize = 36
+        plt.hexbin(phi, psi, gridsize=gridsize, cmap=plt.cm.summer, mincnt=1)
+
     plt.xlabel('$\phi$', fontsize=16)
     plt.ylabel('$\psi$', fontsize=16, rotation=0)
     plt.xlim(-180, 180) 

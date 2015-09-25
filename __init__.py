@@ -22,7 +22,7 @@ sys.path.append(path)
 db_path = os.path.join(path, 'db_glycans')
 from BuildOligo import read_input, builder
 from cartoonize import cartoonize
-from utils import r_gyration, rama_plot
+from utils import analyse
 from mcm import mcm_run
 
 
@@ -86,8 +86,9 @@ def mainDialog():
     
 
     def enable_disable():
-        """enables the fields electrostatic and vdw cuttoff"""
-        if vis_rg_value.get() and to_state.get() > 1:
+        """enables the checkbutton by_state if rg visualization is enabled and 
+        if there is more than one state to visualize"""
+        if vis_rg_value.get() and (to_state.get() - from_state.get())  > 1:
             entry_by_state.configure(state='normal')
         else:
             entry_by_state.configure(state='disabled')
@@ -182,10 +183,22 @@ def mainDialog():
     group = Pmw.Group(p3, tag_text='options')
     group.pack(fill='both', expand=1, padx=5, pady=5)
     
-    Label(group.interior(), text='selection').grid(row=1, column=0)
+    # List available computations
+    Label(group.interior(), text=' Analysis ').grid(row=0, column=0)
+    type_analysis = StringVar(master=group.interior())
+    type_analysis.set('Rama scatter')
+    Pmw.OptionMenu(group.interior(),
+        labelpos = 'w',
+        menubutton_textvariable = type_analysis,
+        items = ['Rama scatter', 'Rama hex', ' Rg'],
+        menubutton_width = 12,
+        ).grid(row=0, column=1)
+    
+    
+    Label(group.interior(), text='Selection').grid(row=1, column=0)
     sel0_value = StringVar(master=group.interior())
     sel0_value.set('all')
-    entry_sel0_value = Entry(group.interior(),textvariable=sel0_value, width=15)
+    entry_sel0_value = Entry(group.interior(),textvariable=sel0_value, width=12)
     entry_sel0_value.grid(row=1, column=1)
     entry_sel0_value.configure(state='normal')
     #entry_sel0_value.update()
@@ -194,32 +207,31 @@ def mainDialog():
     Label(group.interior(), text='From state').grid(row=2, column=0)
     from_state = IntVar(master=group.interior())
     from_state.set(1)
-    entry_from_state = Entry(group.interior(), textvariable=from_state, width=15)
+    entry_from_state = Entry(group.interior(), textvariable=from_state, width=12)
     entry_from_state.grid(row=2, column=1)
     #entry_from_state.update()
     Label(group.interior(), text='To state').grid(row=3, column=0)
     to_state = IntVar(master=group.interior())
     to_state.set(cmd.count_states(sel0_value.get()))
-    entry_to_state = Entry(group.interior(), textvariable=to_state, width=15)
+    entry_to_state = Entry(group.interior(), textvariable=to_state, width=12)
     entry_to_state.grid(row=3, column=1)
     #entry_to_state.update()
 
-    
+    Label(group.interior(), text='Rg Visualization').grid(row=4, column=0)    
     vis_rg_value = BooleanVar(master=group.interior())
     vis_rg_value.set(False)
-    entry_rg = Checkbutton(group.interior(), text='Rg Visualization', variable=vis_rg_value, command=enable_disable)
-    entry_rg.grid(row=4, columnspan=3)
-    #entry_rg.update()
+    entry_rg = Checkbutton(group.interior(), variable=vis_rg_value, command=enable_disable)
+    entry_rg.grid(row=4, column=1)
+    entry_rg.update()
     by_state_value = BooleanVar(master=group.interior())
     by_state_value.set(False)
     entry_by_state = Checkbutton(group.interior(), text='By state', variable=by_state_value)
-    entry_by_state.grid(row=5, columnspan=3)
+    entry_by_state.grid(row=5, columnspan=1)
     entry_by_state.configure(state='disabled')
-    #entry_by_state.update()
+    entry_by_state.update()
     
 
-    Button(p3, text="Rg computation", command=lambda: r_gyration(sel0_value.get(), int(entry_from_state.get()), int(entry_to_state.get()),  vis_rg_value.get(), by_state_value.get())).pack(side=LEFT)
-    Button(p3, text="Ramachandran plot", command=lambda: rama_plot(sel0_value.get(), int(entry_from_state.get()), int(entry_to_state.get()))).pack(side=RIGHT)
+    Button(p3, text="Run analysis", command=lambda: analyse(type_analysis.get(), sel0_value.get(), int(entry_from_state.get()), int(entry_to_state.get()),  vis_rg_value.get(), by_state_value.get())).pack()
     ############################## MCM TAB ####################################
     group = Pmw.Group(p4, tag_text='options')
     group.pack(fill='both', expand=1, padx=5, pady=5)
