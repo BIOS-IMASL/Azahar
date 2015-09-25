@@ -1,25 +1,30 @@
 from __future__ import division
 import pymol
 from pymol import cmd
-import openbabel as ob
 import numpy as np
 import threading
 import glob, os, sys
 path = os.path.dirname(__file__)
 sys.path.append(path)
 from torsionals import *
-from energy import minimize, set_sasa, get_sasa
 from utils import pose_from_pdb, get_glyco_bonds, writer
 
  
 def mcm_run(pose, mc_steps, SASA, randomize):
-    t = threading.Thread(target=mcm, args=(pose, mc_steps, SASA, randomize))
-    t.daemon = True # XXX
-    t.start()
+    try:
+        import openbabel as ob
+        from energy import minimize, set_sasa, get_sasa
+        t = threading.Thread(target=mcm, args=(pose, mc_steps, SASA, randomize))
+        t.daemon = True # XXX
+        t.start()
+    except ImportError:
+        import tkMessageBox
+        tkMessageBox.showerror(message='In order to run MCM, you need to have openbabel installed in your system. Read http://pymolwiki.org/index.php/Azahar for more information', title='openbabel not found')
+        
 
 
 def mcm(pose, mc_steps, SASA, randomize):
-    cmd.set('defer_updates', 'on')
+    cmd.set('suspend_updates', 'on')
     cmd.feedback('disable', 'executive', 'everything')   ##uncomment for debugging
     cmd.set('pdb_conect_all', 1)
     ################################# MCM Parameters ##########################
@@ -28,7 +33,7 @@ def mcm(pose, mc_steps, SASA, randomize):
     angles_prob = [1/3, 1/3, 1/3] # probability to sample phi, psi or chi
     accepted = 0
     ############################################################################
-
+    print 'Starting MCM'
     # 
     first, last = pose_from_pdb(pose)
     glyco_bonds = get_glyco_bonds(first, last)
@@ -58,7 +63,6 @@ def mcm(pose, mc_steps, SASA, randomize):
 
     ## start MCM routine
     fd = open("mcm_log.txt", "w")
-    print 'Starting MCM'
     print '# iterations remaining = %s' % (mc_steps)
     for i in range(1, mc_steps+1):
         if i % (mc_steps//10) == 0:
@@ -113,5 +117,5 @@ def mcm(pose, mc_steps, SASA, randomize):
     cmd.load('mcm_trace.pdb')
     cmd.intra_fit('mcm_trace')
     print ' MCM finished'
-    cmd.set('defer_updates', 'off')
+    cmd.set('suspend_updates', 'off')
     
