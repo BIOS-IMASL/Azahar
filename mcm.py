@@ -8,12 +8,10 @@ path = os.path.dirname(__file__)
 sys.path.append(path)
 from torsionals import *
 from utils import pose_from_pdb, get_glyco_bonds, writer
-
  
 def mcm_run(pose, mc_steps, SASA, randomize):
     try:
         import openbabel as ob
-        from energy import minimize, set_sasa, get_sasa
         t = threading.Thread(target=mcm, args=(pose, mc_steps, SASA, randomize))
         t.daemon = True # XXX
         t.start()
@@ -22,8 +20,31 @@ def mcm_run(pose, mc_steps, SASA, randomize):
         tkMessageBox.showerror(message='In order to run MCM, you need to have openbabel installed in your system. Read http://pymolwiki.org/index.php/Azahar for more information', title='openbabel not found')
         
 
+def sample_uniform(pose, con_matrix, angles_prob):
+    random_angle = np.random.choice(['phi', 'psi', 'chi'], p=angles_prob)
+    random_res = np.random.random_integers(0, len(con_matrix)-1)
+    bond = con_matrix[random_res]
+    cmd.copy('tmp', pose)
+    if random_angle == "phi":
+        phi = get_phi('tmp', bond)
+        angle_value = np.random.normal(phi, 30)
+        set_phi('tmp', bond, angle_value)
+    elif random_angle == "psi":
+        psi = get_psi('tmp', bond)
+        angle_value = np.random.normal(psi, 30)
+        set_psi('tmp', bond, angle_value)
+    else:
+        set_chi('tmp', bond)
+        set_chi('tmp', bond)
+
+
+def sample_fromfile(pose, con_matrix, angles_prob):
+    pass
+
 
 def mcm(pose, mc_steps, SASA, randomize):
+    print 'Starting MCM'
+    from energy import minimize, set_sasa, get_sasa
     cmd.set('suspend_updates', 'on')
     cmd.feedback('disable', 'executive', 'everything')   ##uncomment for debugging
     cmd.set('pdb_conect_all', 1)
@@ -33,7 +54,6 @@ def mcm(pose, mc_steps, SASA, randomize):
     angles_prob = [1/3, 1/3, 1/3] # probability to sample phi, psi or chi
     accepted = 0
     ############################################################################
-    print 'Starting MCM'
     # 
     first, last = pose_from_pdb(pose)
     glyco_bonds = get_glyco_bonds(first, last)
@@ -67,21 +87,8 @@ def mcm(pose, mc_steps, SASA, randomize):
     for i in range(1, mc_steps+1):
         if i % (mc_steps//10) == 0:
             print '#remaining iterations = %s' % (mc_steps-i)
-        random_angle = np.random.choice(['phi', 'psi', 'chi'], p=angles_prob)
-        random_res = np.random.random_integers(0, len(con_matrix)-1)
-        bond = con_matrix[random_res]
-        cmd.copy('tmp', pose)
-        if random_angle == "phi":
-            phi = get_phi('tmp', bond)
-            angle_value = np.random.normal(phi, 30)
-            set_phi('tmp', bond, angle_value)
-        elif random_angle == "psi":
-            psi = get_psi('tmp', bond)
-            angle_value = np.random.normal(psi, 30)
-            set_psi('tmp', bond, angle_value)
-        else:
-            set_chi('tmp', bond)
-            set_chi('tmp', bond)
+        if True:
+            sample_uniform(pose, con_matrix, angles_prob)
         NRG_new = minimize('tmp', nsteps=100, rigid_geometry=False)
         if SASA:
             solvatation_nrg = get_sasa(params, points, const, selection='all',
@@ -116,6 +123,6 @@ def mcm(pose, mc_steps, SASA, randomize):
     cmd.delete('all')
     cmd.load('mcm_trace.pdb')
     cmd.intra_fit('mcm_trace')
-    print ' MCM finished'
+    print ' MCM completed'
     cmd.set('suspend_updates', 'off')
     
