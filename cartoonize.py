@@ -69,10 +69,17 @@ def get_bonds_coords(resn_list, matrix):
         coords = []
         for bond in matrix:
             stored.pos = []
-            cmd.iterate_state(state, 'resi %s and name c%s or resi %s and name c%s' % (bond[0], bond[4], bond[2], bond[5]), 'stored.pos.append((x,y,z))')
+            if bond[4] == '6':
+                cmd.iterate_state(state, 'resi %s and name c%s or resi %s and name c%s' % (bond[0], 5, bond[2], bond[5]), 'stored.pos.append((x,y,z))')
+            elif bond[5] == '6':
+                cmd.iterate_state(state, 'resi %s and name c%s or resi %s and name c%s' % (bond[0], bond[4], bond[2], 5), 'stored.pos.append((x,y,z))')
+            else:
+                cmd.iterate_state(state, 'resi %s and name c%s or resi %s and name c%s' % (bond[0], bond[4], bond[2], bond[5]), 'stored.pos.append((x,y,z))')
             x1, y1, z1 = stored.pos[0]
             x2, y2, z2 = stored.pos[1]
             coords.append((x1, y1, z1, x2, y2, z2))
+            print bond[0], bond[4], bond[2], bond[5]
+            
         matrix_coords.append(coords)
     return matrix_coords        
 
