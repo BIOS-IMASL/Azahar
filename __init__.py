@@ -176,9 +176,35 @@ def mainDialog():
     Button(p1, text="create", command=lambda: create(mol_name.get())).pack(side=LEFT)
     Button(p1, text="reset", command=reset).pack(side=RIGHT)
     ############################ Visualization TAB #############################
-    group = Pmw.Group(p2, tag_text='')
+    group = Pmw.Group(p2, tag_text='options')
     group.pack(fill='both', expand=1, padx=5, pady=5)
-    Button(group.interior(), text="cartoon", command=cartoonize).pack()
+    
+    colors_list =  ['auto', 'green', 'red', 'blue', 'yellow', 'cyan', 'magenta', 
+    'orange', 'grey', 'black', 'white']
+    Label(group.interior(), text='Colors').grid(row=0, column=0)
+    colors = StringVar(master=group.interior())
+    colors.set(colors_list[0])
+    Pmw.OptionMenu(group.interior(),
+        labelpos = 'w',
+        menubutton_textvariable = colors,
+        items = colors_list,
+        menubutton_width = 12,
+        ).grid(row=0, column=1)
+    
+    rep_list =  ['cartoon', 'wire', 'beads']
+    Label(group.interior(), text='Representations').grid(row=1, column=0)
+    rep = StringVar(master=group.interior())
+    rep.set(rep_list[0])
+    Pmw.OptionMenu(group.interior(),
+        labelpos = 'w',
+        menubutton_textvariable = rep,
+        items = rep_list,
+        menubutton_width = 12,
+        ).grid(row=1, column=1)
+    
+    Button(p2, text="visualize", command=lambda: cartoonize(colors.get(),
+    rep.get()
+    )).pack()
     ############################Calculations TAB################################
     group = Pmw.Group(p3, tag_text='options')
     group.pack(fill='both', expand=1, padx=5, pady=5)
@@ -231,12 +257,12 @@ def mainDialog():
     entry_by_state.update()
     
 
-    Button(p3, text="Run analysis", command=lambda: analyse(type_analysis.get(), sel0_value.get(), int(entry_from_state.get()), int(entry_to_state.get()),  vis_rg_value.get(), by_state_value.get())).pack()
+    Button(p3, text="run analysis", command=lambda: analyse(type_analysis.get(), sel0_value.get(), int(entry_from_state.get()), int(entry_to_state.get()),  vis_rg_value.get(), by_state_value.get())).pack()
     ############################## MCM TAB ####################################
     group = Pmw.Group(p4, tag_text='options')
     group.pack(fill='both', expand=1, padx=5, pady=5)
     # Selection
-    Label(group.interior(), text='molecule').grid(row=0, column=0)
+    Label(group.interior(), text='Molecule').grid(row=0, column=0)
     molecule = StringVar(master=group.interior())
     molecule.set('carb')
     entry_molecule = Entry(group.interior(), textvariable=molecule, width=5)
@@ -255,13 +281,13 @@ def mainDialog():
     entry_sasa.grid(row=2, column=1)
     entry_sasa.configure(state='active')
     # randomize initial structure
-    Label(group.interior(), text='randomize').grid(row=3, column=0)    
+    Label(group.interior(), text='Randomize').grid(row=3, column=0)    
     randomize = BooleanVar(master=group.interior())
     randomize.set(True)
     entry_rnd = Checkbutton(group.interior(), variable=randomize)
     entry_rnd.grid(row=3, column=1)
     entry_rnd.configure(state='active')
-    Button(p4, text="Run MCM", command=lambda: mcm_run(entry_molecule.get(), 
+    Button(p4, text="run MCM", command=lambda: mcm_run(entry_molecule.get(), 
     int(entry_iterations.get()), 
     bool(sasa.get()),
     bool(randomize.get()),
