@@ -79,6 +79,7 @@ def mcm(pose, mc_steps, SASA, randomize):
     
     # minimize energy of starting conformation and save it
     NRG_old = minimize(pose, nsteps=5000, rigid_geometry=False)
+    NRG_min = NRG_old
     cmd.save('mcm_%08d.pdb' % accepted)
 
     ## start MCM routine
@@ -110,8 +111,11 @@ def mcm(pose, mc_steps, SASA, randomize):
                 cmd.copy(pose, 'tmp')
                 cmd.delete('tmp')
                 cmd.save('mcm_%08d.pdb' % accepted)
-                accepted += 1
+                accepted += 1 
         cmd.delete('tmp')
+        if NRG_new < NRG_min:
+            NRG_min = NRG_new
+            cmd.save('mcm_min.pdb')
     fd.close()
 
     cmd.delete('all')
