@@ -9,6 +9,7 @@ import pymol
 from pymol import cmd, stored
 import numpy as np
 import matplotlib.pyplot as plt
+import tkMessageBox
 import os, sys
 path = os.path.dirname(__file__)
 sys.path.append(path)
@@ -29,9 +30,14 @@ def pose_from_pdb(pdb_file):
     """
     stored.ResiduesNumber = []
     cmd.iterate('name c1', 'stored.ResiduesNumber.append((resi))')
-    first = int(stored.ResiduesNumber[0])
-    last = first+len(stored.ResiduesNumber)
-    return first, last
+    if stored.ResiduesNumber:
+        first = int(stored.ResiduesNumber[0])
+        last = first+len(stored.ResiduesNumber)
+        return first, last
+    else:
+        tkMessageBox.showerror("GlycanNotFound", "There is no glycan molecule \
+or the atoms in your molecule have a non-standard nomenclature")
+        return None, None
     
     
 def get_glyco_bonds(first, last):
@@ -41,7 +47,8 @@ def get_glyco_bonds(first, last):
     stored.nb = []
     for res_i in range(first, last):
         # TODO In the future we should be able to deal with glyco-conjugates!
-        cmd.iterate( "not polymer and (neighbor resi %s)" % res_i,  'stored.nb.append((%s, int(resi), name[-1], resn))' % res_i)
+        cmd.iterate( "not polymer and (neighbor resi %s)" % res_i,  
+        'stored.nb.append((%s, int(resi), name[-1], resn))' % res_i)
     return stored.nb
     
 
@@ -81,8 +88,12 @@ def r_gyration(selection='all', from_state=1, to_state=1,  visual=True, by_state
         rg = np.sqrt(np.sum((xyz - center)**2)/len(xyz))
         fd.write('%9d%8.2f\n'% (state, rg))
         radii.append(rg)
-    rg_mean = sum(radii)/len(radii)
-    centers_mean = sum(centers)/len(centers)
+    try:     
+        rg_mean = sum(radii)/len(radii)
+        centers_mean = sum(centers)/len(centers)
+    except ZeroDivisionError:
+        rg_mean = np.nan
+        centers_mean = np.nan
     fd.write('Rg_mean = %8.2f\n'% rg_mean)   
     fd.close()
     print 'Rg_mean = %8.2f\n' % rg_mean
@@ -103,31 +114,32 @@ def r_gyration(selection='all', from_state=1, to_state=1,  visual=True, by_state
 def rama_plot(selection='all', from_state=1, to_state=1, scatter=True):
     """ 
     Makes a scatter plot with the phi and psi angle pairs
-    """  
+    """
     first, last = pose_from_pdb(selection)
-    bonds = get_glyco_bonds(first, last)
+    if first or last:
+        bonds = get_glyco_bonds(first, last)
     
-    con_matrix = writer(bonds)
+        con_matrix = writer(bonds)
     
-    phi = []
-    psi = []
-    for state in range(from_state, to_state+1):
-        for element in con_matrix:
-            phi.append(get_phi(selection, element, state))
-            psi.append(get_psi(selection, element, state))
+        phi = []
+        psi = []
+        for state in range(from_state, to_state+1):
+            for element in con_matrix:
+                phi.append(get_phi(selection, element, state))
+                psi.append(get_psi(selection, element, state))
 
-    if scatter:
-        plt.scatter(phi, psi)
-    else:
-        gridsize=100
-        #gridsize = int(2*len(phi)**(1/3))
-        #if gridsize < 36:
-        #    gridsize = 36
-        plt.hexbin(phi, psi, gridsize=gridsize, cmap=plt.cm.summer, mincnt=1)
-
-    plt.xlabel('$\phi$', fontsize=16)
-    plt.ylabel('$\psi$', fontsize=16, rotation=0)
-    plt.xlim(-180, 180) 
-    plt.ylim(-180, 180)
-    plt.show()
+        if scatter:
+            plt.scatter(phi, psi)
+        else:
+            gridsize=100
+            #gridsize = int(2*len(phi)**(1/3))
+            #if gridsize < 36:
+            #    gridsize = 36
+            plt.hexbin(phi, psi, gridsize=gridsize, cmap=plt.cm.summer, mincnt=1)
+    
+        plt.xlabel('$\phi$', fontsize=16)
+        plt.ylabel('$\psi$', fontsize=16, rotation=0)
+        plt.xlim(-180, 180) 
+        plt.ylim(-180, 180)
+        plt.show()
 

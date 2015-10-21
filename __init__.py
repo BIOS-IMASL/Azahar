@@ -59,8 +59,7 @@ def mainDialog():
         for i in range(linear_residues):
             text = '%5s%30s%5s%30s%2s%2s\n' % (first+i, residue0, total+i+1, 
             residue1, bond[1], bond[3])
-            print text,
-            conectivity_matrix.write(text)
+            print(text, conectivity_matrix.write(text))
         total = total+i+1
         first_res.set(total)
         total_res.set(total)
@@ -72,12 +71,13 @@ def mainDialog():
         if os.path.isfile('%s_matrix.dat' % mol_name):
             residues, bonds = read_input('%s_matrix.dat' % mol_name)
             builder(residues, bonds, mol_name)
+            to_state.set(cmd.count_states(sel0_value.get()))
+            cmd.zoom()
+            cmd.util.chainbow(mol_name)
         else:
-            tkMessageBox.showerror("FileNotFound", """You should add residues 
-            \nbefore creating a molecule.""")
-        to_state.set(cmd.count_states(sel0_value.get()))
-        cmd.zoom()
-        cmd.util.chainbow(mol_name)
+            tkMessageBox.showerror("FileNotFound", "You should add residues\
+            before creating a molecule.")
+
 
     def reset():
         n_residues.set(1)
