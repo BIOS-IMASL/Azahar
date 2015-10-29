@@ -10,6 +10,7 @@ from pymol import cmd, stored
 import numpy as np
 import matplotlib.pyplot as plt
 import tkMessageBox
+from pymol.cgo import *
 import os, sys
 path = os.path.dirname(__file__)
 sys.path.append(path)
@@ -81,7 +82,7 @@ def r_gyration(selection='all', from_state=1, to_state=1,  visual=True, by_state
     radii = []
     centers = []
     for state in range(from_state, to_state+1):
-        model = cmd.get_model(selection)
+        model = cmd.get_model(selection, state)
         xyz = np.array(model.get_coord_list())
         center = np.average(xyz, 0)
         centers.append(center)
@@ -99,16 +100,20 @@ def r_gyration(selection='all', from_state=1, to_state=1,  visual=True, by_state
     print 'Rg_mean = %8.2f\n' % rg_mean
 
     if visual:
+        r, g, b = 0, 0, 1
         if by_state:
             cmd.set('defer_updates', 'on')
             for state in range(from_state, to_state+1):
-                cmd.pseudoatom('sphere_rg', pos=tuple(center), vdw=radii[state-1],
-                 color='blue', state=state)
+                x1, y1, z1 = tuple(centers[state-1])
+                radius = radii[state-1]
+                obj = [COLOR, r, g, b, SPHERE, x1, y1, z1, radius]
+                cmd.load_cgo(obj,'sphere_rg', state+1)
             cmd.set('defer_updates', 'off')
         else:
-            cmd.pseudoatom('sphere_rg', pos=tuple(centers_mean), vdw=rg_mean,
-             color='blue')
-        cmd.show("spheres", 'sphere_rg')
+            x1, y1, z1 = tuple(centers_mean)
+            radius = rg_mean
+            obj = [COLOR, r, g, b, SPHERE, x1, y1, z1, radius]
+            cmd.load_cgo(obj,'sphere_rg')
 
 
 def rama_plot(selection='all', from_state=1, to_state=1, scatter=True):
