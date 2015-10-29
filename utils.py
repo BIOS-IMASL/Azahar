@@ -57,11 +57,11 @@ def writer(bonds):
     Write conectivity matrix
     """
     con_matrix = []
-    for i, ibond in enumerate(bonds):    
+    for i, ibond in enumerate(bonds):
         for jbond in bonds[i+1:]:
             if ibond[0] == jbond[1] and ibond[1] == jbond[0]:
-                con_matrix.append((jbond[0], ibond[3], ibond[0],
-                jbond[3], int(ibond[2]), int(jbond[2])))        
+                con_matrix.append((jbond[0], jbond[3], ibond[0],
+                 ibond[3], int(ibond[2]), int(jbond[2])))        
     return con_matrix
 
 

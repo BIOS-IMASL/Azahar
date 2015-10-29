@@ -3,30 +3,7 @@ import pymol
 from pymol import cmd, stored
 from pymol.cgo import *
 import numpy as np
-
-
-def get_glyco_bonds(resn_list):
-    """
-    Obtain glycosidic bonds from a pymol object
-    """       
-    stored.nb = []
-    for res_i in resn_list:
-        # TODO In the future we should be able to deal with glyco-conjugates!
-        cmd.iterate( "not polymer and (neighbor resi %s)" % res_i,  'stored.nb.append((%s, int(resi), name[1], resn))' % res_i)
-    return stored.nb
-
-
-def writer(bonds):
-    """
-    Write conectivity matrix
-    """
-    con_matrix = []
-    for i, ibond in enumerate(bonds):
-        for jbond in bonds[i+1:]:
-            if ibond[0] == jbond[1] and ibond[1] == jbond[0]:
-                con_matrix.append((jbond[0], jbond[3], ibond[0],
-                 ibond[3], ibond[2], jbond[2]))        
-    return con_matrix
+from utils import get_glyco_bonds, writer
 
 
 def find_rings(resn_list):
@@ -182,8 +159,9 @@ def cartoonize(color, rep):
     stored.ResiduesNumber = []
     cmd.iterate('name c1', 'stored.ResiduesNumber.append((resi))')
     resn_list = [int(i) for i in stored.ResiduesNumber]
-    bonds = get_glyco_bonds(resn_list)
+    bonds = get_glyco_bonds(resn_list[0], resn_list[-1]+1)
     con_matrix = writer(bonds)
+    #con_matrix = writer2(bonds)
     rings = find_rings(resn_list)
     rings_coords = get_ring_coords(resn_list, rings)
     bonds_coords = get_bonds_coords(resn_list, con_matrix)
