@@ -120,7 +120,7 @@ def mainDialog():
     selected_res0.set('a-D-glucose')
     
     residues_templates = [os.path.splitext(x)[0] for x in os.listdir(db_path)]
-
+    residues_templates.sort()
     Pmw.OptionMenu(group.interior(),
                 labelpos = 'w',
                 label_text = 'Residue 1',
