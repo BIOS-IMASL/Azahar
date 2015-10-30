@@ -59,7 +59,7 @@ def mainDialog():
         for i in range(linear_residues):
             text = '%5s%30s%5s%30s%2s%2s\n' % (first+i, residue0, total+i+1, 
             residue1, bond[1], bond[3])
-            print(text)
+            print(text,)
             conectivity_matrix.write(text)
         total = total+i+1
         first_res.set(total)
