@@ -59,7 +59,7 @@ def mainDialog():
         for i in range(linear_residues):
             text = '%5s%30s%5s%30s%2s%2s\n' % (first+i, residue0, total+i+1, 
             residue1, bond[1], bond[3])
-            print(text)
+            print('%s' % text),
             conectivity_matrix.write(text)
         total = total+i+1
         first_res.set(total)
@@ -120,7 +120,7 @@ def mainDialog():
     selected_res0.set('a-D-glucose')
     
     residues_templates = [os.path.splitext(x)[0] for x in os.listdir(db_path)]
-
+    residues_templates.sort()
     Pmw.OptionMenu(group.interior(),
                 labelpos = 'w',
                 label_text = 'Residue 1',
