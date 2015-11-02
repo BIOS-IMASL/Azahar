@@ -1,41 +1,41 @@
-ATOM      1  C1  ADR A   0       0.448   0.125   7.431  1.00  0.00           C  
-ATOM      2  O1  ADR A   0       0.725   1.168   8.353  1.00  0.00           O  
-ATOM      3  C2  ADR A   0       0.012  -1.133   8.183  1.00  0.00           C  
-ATOM      4  O2  ADR A   0       0.019  -2.282   7.320  1.00  0.00           O  
-ATOM      5  C3  ADR A   0      -1.416  -0.740   8.521  1.00  0.00           C  
-ATOM      6  O3  ADR A   0      -2.220  -1.864   8.861  1.00  0.00           O  
-ATOM      7  C4  ADR A   0      -1.840  -0.098   7.198  1.00  0.00           C  
-ATOM      8  C5  ADR A   0      -2.981   0.890   7.373  1.00  0.00           C  
-ATOM      9  O5  ADR A   0      -4.084   0.221   7.988  1.00  0.00           O  
-ATOM     10  OR  ADR A   0      -0.681   0.555   6.650  1.00  0.00           O  
-ATOM     11  H1  ADR A   0       1.310  -0.040   6.777  1.00  0.00           H  
-ATOM     12  H2  ADR A   0       0.618  -1.354   9.066  1.00  0.00           H  
-ATOM     13  H3  ADR A   0      -1.431  -0.020   9.345  1.00  0.00           H  
-ATOM     14  H4  ADR A   0      -2.160  -0.883   6.499  1.00  0.00           H  
-ATOM     15  H5R ADR A   0      -3.294   1.279   6.391  1.00  0.00           H  
-ATOM     16  H5S ADR A   0      -2.689   1.732   7.985  1.00  0.00           H  
-ATOM     17  H1o ADR A   0       0.983   1.924   7.799  1.00  0.00           H  
-ATOM     18  H2o ADR A   0      -0.833  -2.737   7.483  1.00  0.00           H  
-ATOM     19  H3o ADR A   0      -3.139  -1.523   8.885  1.00  0.00           H  
-ATOM     20  H5o ADR A   0      -4.816   0.860   8.008  1.00  0.00           H  
+ATOM      1  C1  ADR A   0       0.450   0.129   7.426  1.00  0.00           C  
+ATOM      2  O1  ADR A   0       0.754   1.170   8.348  1.00  0.00           O  
+ATOM      3  C2  ADR A   0       0.009  -1.129   8.176  1.00  0.00           C  
+ATOM      4  O2  ADR A   0       0.022  -2.284   7.315  1.00  0.00           O  
+ATOM      5  C3  ADR A   0      -1.420  -0.746   8.507  1.00  0.00           C  
+ATOM      6  O3  ADR A   0      -2.220  -1.878   8.831  1.00  0.00           O  
+ATOM      7  C4  ADR A   0      -1.840  -0.088   7.192  1.00  0.00           C  
+ATOM      8  C5  ADR A   0      -2.992   0.885   7.378  1.00  0.00           C  
+ATOM      9  O5  ADR A   0      -4.097   0.226   7.998  1.00  0.00           O  
+ATOM     10  OR  ADR A   0      -0.679   0.582   6.664  1.00  0.00           O  
+ATOM     11  H1  ADR A   0       1.303  -0.043   6.764  1.00  0.00           H  
+ATOM     12  H2  ADR A   0       0.605  -1.356   9.072  1.00  0.00           H  
+ATOM     13  H3  ADR A   0      -1.443  -0.035   9.342  1.00  0.00           H  
+ATOM     14  H4  ADR A   0      -2.151  -0.862   6.477  1.00  0.00           H  
+ATOM     15  H1o ADR A   0       1.017   1.918   7.784  1.00  0.00           H  
+ATOM     16  H2o ADR A   0      -0.788  -2.781   7.550  1.00  0.00           H  
+ATOM     17  H5R ADR A   0      -3.313   1.280   6.406  1.00  0.00           H  
+ATOM     18  H5S ADR A   0      -2.694   1.737   7.997  1.00  0.00           H  
+ATOM     19  H3o ADR A   0      -3.139  -1.538   8.873  1.00  0.00           H  
+ATOM     20  H5o ADR A   0      -4.835   0.867   8.012  1.00  0.00           H  
 CONECT    1    2    3   10   11
-CONECT    2    1   17
+CONECT    2    1   15
 CONECT    3    1    4    5   12
-CONECT    4    3   18
+CONECT    4    3   16
 CONECT    5    3    6    7   13
 CONECT    6    5   19
 CONECT    7    5    8   10   14
-CONECT    8    7    9   15   16
+CONECT    8    7    9   17   18
 CONECT    9    8   20
 CONECT   10    1    7
 CONECT   11    1
 CONECT   12    3
 CONECT   13    5
 CONECT   14    7
-CONECT   15    8
-CONECT   16    8
-CONECT   17    2
-CONECT   18    4
+CONECT   15    2
+CONECT   16    4
+CONECT   17    8
+CONECT   18    8
 CONECT   19    6
 CONECT   20    9
 END

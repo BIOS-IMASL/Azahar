@@ -1,39 +1,39 @@
-ATOM      1  C1  ARB A   0       0.442   0.117   7.427  1.00  0.00           C  
-ATOM      2  O1  ARB A   0       0.718   1.157   8.352  1.00  0.00           O  
-ATOM      3  C2  ARB A   0       0.013  -1.117   8.189  1.00  0.00           C  
-ATOM      4  C3  ARB A   0      -1.406  -0.737   8.529  1.00  0.00           C  
-ATOM      5  O3  ARB A   0      -2.209  -1.850   8.892  1.00  0.00           O  
-ATOM      6  C4  ARB A   0      -1.840  -0.104   7.202  1.00  0.00           C  
-ATOM      7  C5  ARB A   0      -2.975   0.892   7.362  1.00  0.00           C  
-ATOM      8  O5  ARB A   0      -4.090   0.239   7.978  1.00  0.00           O  
-ATOM      9  H1  ARB A   0       1.316  -0.046   6.793  1.00  0.00           H  
-ATOM     10  H21 ARB A   0       0.016  -2.006   7.548  1.00  0.00           H  
-ATOM     11  H22 ARB A   0       0.626  -1.324   9.070  1.00  0.00           H  
-ATOM     12  H3  ARB A   0      -1.426  -0.006   9.350  1.00  0.00           H  
-ATOM     13  H4  ARB A   0      -2.161  -0.895   6.515  1.00  0.00           H  
-ATOM     14  H5R ARB A   0      -3.285   1.283   6.390  1.00  0.00           H  
-ATOM     15  H5S ARB A   0      -2.675   1.741   7.982  1.00  0.00           H  
-ATOM     16  OR  ARB A   0      -0.677   0.532   6.641  1.00  0.00           O  
-ATOM     17  H1o ARB A   0       0.967   1.922   7.808  1.00  0.00           H  
-ATOM     18  H3o ARB A   0      -3.132  -1.517   8.878  1.00  0.00           H  
-ATOM     19  H6o ARB A   0      -4.810   0.892   8.017  1.00  0.00           H  
-CONECT    1    2    3    9   16
-CONECT    2    1   17
-CONECT    3    1    4   10   11
-CONECT    4    3    5    6   12
+ATOM      1  C1  ARB A   0       0.444   0.121   7.429  1.00  0.00           C  
+ATOM      2  O1  ARB A   0       0.729   1.163   8.349  1.00  0.00           O  
+ATOM      3  C2  ARB A   0       0.013  -1.117   8.191  1.00  0.00           C  
+ATOM      4  C3  ARB A   0      -1.411  -0.736   8.523  1.00  0.00           C  
+ATOM      5  O3  ARB A   0      -2.205  -1.852   8.885  1.00  0.00           O  
+ATOM      6  C4  ARB A   0      -1.838  -0.104   7.202  1.00  0.00           C  
+ATOM      7  C5  ARB A   0      -2.982   0.889   7.367  1.00  0.00           C  
+ATOM      8  O5  ARB A   0      -4.095   0.242   7.980  1.00  0.00           O  
+ATOM      9  OR  ARB A   0      -0.677   0.534   6.644  1.00  0.00           O  
+ATOM     10  H1  ARB A   0       1.318  -0.051   6.793  1.00  0.00           H  
+ATOM     11  H3  ARB A   0      -1.429  -0.011   9.348  1.00  0.00           H  
+ATOM     12  H4  ARB A   0      -2.161  -0.892   6.507  1.00  0.00           H  
+ATOM     13  H21 ARB A   0       0.025  -2.004   7.552  1.00  0.00           H  
+ATOM     14  H22 ARB A   0       0.618  -1.322   9.080  1.00  0.00           H  
+ATOM     15  H1o ARB A   0       0.978   1.920   7.797  1.00  0.00           H  
+ATOM     16  H5R ARB A   0      -3.287   1.282   6.392  1.00  0.00           H  
+ATOM     17  H5S ARB A   0      -2.677   1.740   7.985  1.00  0.00           H  
+ATOM     18  H3o ARB A   0      -3.129  -1.525   8.878  1.00  0.00           H  
+ATOM     19  H6o ARB A   0      -4.812   0.898   8.015  1.00  0.00           H  
+CONECT    1    2    3    9   10
+CONECT    2    1   15
+CONECT    3    1    4   13   14
+CONECT    4    3    5    6   11
 CONECT    5    4   18
-CONECT    6    4    7   13   16
-CONECT    7    6    8   14   15
+CONECT    6    4    7    9   12
+CONECT    7    6    8   16   17
 CONECT    8    7   19
-CONECT    9    1
-CONECT   10    3
-CONECT   11    3
-CONECT   12    4
-CONECT   13    6
-CONECT   14    7
-CONECT   15    7
-CONECT   16    1    6
-CONECT   17    2
+CONECT    9    1    6
+CONECT   10    1
+CONECT   11    4
+CONECT   12    6
+CONECT   13    3
+CONECT   14    3
+CONECT   15    2
+CONECT   16    7
+CONECT   17    7
 CONECT   18    5
 CONECT   19    8
 END

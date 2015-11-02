@@ -1,45 +1,45 @@
-ATOM      1  C1  AFL A   0       5.130   0.361  -8.636  0.00  0.00           C  
-ATOM      2  O1  AFL A   0       5.064  -0.289  -7.384  0.00  0.00           O  
-ATOM      3  C2  AFL A   0       4.235  -0.354  -9.665  0.00  0.00           C  
-ATOM      4  O2  AFL A   0       4.656  -1.708  -9.727  0.00  0.00           O  
-ATOM      5  C3  AFL A   0       2.761  -0.312  -9.233  0.00  0.00           C  
-ATOM      6  O3  AFL A   0       1.969  -0.858 -10.282  0.00  0.00           O  
-ATOM      7  C4  AFL A   0       2.343   1.151  -9.001  0.00  0.00           C  
-ATOM      8  O4  AFL A   0       2.424   1.858 -10.230  0.00  0.00           O  
-ATOM      9  C5  AFL A   0       3.306   1.807  -7.988  0.00  0.00           C  
-ATOM     10  H5  AFL A   0       3.184   1.309  -6.997  0.00  0.00           H  
-ATOM     11  C6  AFL A   0       3.022   3.306  -7.808  0.00  0.00           C  
-ATOM     12  OR  AFL A   0       4.659   1.684  -8.424  0.00  0.00           O  
-ATOM     13  H1  AFL A   0       6.185   0.395  -8.995  0.00  0.00           H  
-ATOM     14  H2  AFL A   0       4.365   0.128 -10.663  0.00  0.00           H  
-ATOM     15  H3  AFL A   0       2.619  -0.900  -8.295  0.00  0.00           H  
-ATOM     16  H4  AFL A   0       1.298   1.194  -8.611  0.00  0.00           H  
-ATOM     17  H61 AFL A   0       1.973   3.485  -7.481  0.00  0.00           H  
-ATOM     18  H62 AFL A   0       3.687   3.756  -7.037  0.00  0.00           H  
-ATOM     19  H63 AFL A   0       3.177   3.878  -8.750  0.00  0.00           H  
-ATOM     20  H1o AFL A   0       5.209  -1.214  -7.550  0.00  0.00           H  
-ATOM     21  H2o AFL A   0       4.082  -2.141 -10.347  0.00  0.00           H  
-ATOM     22  H3o AFL A   0       1.156  -1.175  -9.912  0.00  0.00           H  
-ATOM     23  H4o AFL A   0       2.021   1.310 -10.894  0.00  0.00           H  
-CONECT    1    2    3   12   13
+ATOM      1  C1  AFL A   0       5.112   0.395  -8.607  1.00  0.00           C  
+ATOM      2  O1  AFL A   0       5.098  -0.303  -7.364  1.00  0.00           O  
+ATOM      3  C2  AFL A   0       4.252  -0.350  -9.641  1.00  0.00           C  
+ATOM      4  O2  AFL A   0       4.665  -1.727  -9.717  1.00  0.00           O  
+ATOM      5  C3  AFL A   0       2.779  -0.288  -9.232  1.00  0.00           C  
+ATOM      6  O3  AFL A   0       1.988  -0.870 -10.288  1.00  0.00           O  
+ATOM      7  C4  AFL A   0       2.354   1.167  -8.989  1.00  0.00           C  
+ATOM      8  O4  AFL A   0       2.370   1.882 -10.231  1.00  0.00           O  
+ATOM      9  C5  AFL A   0       3.311   1.835  -7.985  1.00  0.00           C  
+ATOM     10  C6  AFL A   0       3.009   3.314  -7.803  1.00  0.00           C  
+ATOM     11  OR  AFL A   0       4.677   1.734  -8.421  1.00  0.00           O  
+ATOM     12  H1  AFL A   0       6.151   0.416  -8.951  1.00  0.00           H  
+ATOM     13  H2  AFL A   0       4.382   0.091 -10.637  1.00  0.00           H  
+ATOM     14  H3  AFL A   0       2.614  -0.899  -8.335  1.00  0.00           H  
+ATOM     15  H4  AFL A   0       1.320   1.200  -8.628  1.00  0.00           H  
+ATOM     16  H5  AFL A   0       3.217   1.341  -7.011  1.00  0.00           H  
+ATOM     17  H61 AFL A   0       1.977   3.472  -7.479  1.00  0.00           H  
+ATOM     18  H62 AFL A   0       3.682   3.744  -7.052  1.00  0.00           H  
+ATOM     19  H63 AFL A   0       3.184   3.869  -8.729  1.00  0.00           H  
+ATOM     20  H1o AFL A   0       5.231  -1.241  -7.613  1.00  0.00           H  
+ATOM     21  H2o AFL A   0       4.059  -2.139 -10.364  1.00  0.00           H  
+ATOM     22  H3o AFL A   0       1.141  -1.149  -9.893  1.00  0.00           H  
+ATOM     23  H4o AFL A   0       2.013   1.273 -10.904  1.00  0.00           H  
+CONECT    1    2    3   11   12
 CONECT    2    1   20
-CONECT    3    1    4    5   14
+CONECT    3    1    4    5   13
 CONECT    4    3   21
-CONECT    5    3    6    7   15
+CONECT    5    3    6    7   14
 CONECT    6    5   22
-CONECT    7    5    8    9   16
+CONECT    7    5    8    9   15
 CONECT    8    7   23
-CONECT    9    7   10   11   12
-CONECT   10    9
-CONECT   11    9   17   18   19
-CONECT   12    1    9
-CONECT   13    1
-CONECT   14    3
-CONECT   15    5
-CONECT   16    7
-CONECT   17   11
-CONECT   18   11
-CONECT   19   11
+CONECT    9    7   10   11   16
+CONECT   10    9   17   18   19
+CONECT   11    1    9
+CONECT   12    1
+CONECT   13    3
+CONECT   14    5
+CONECT   15    7
+CONECT   16    9
+CONECT   17   10
+CONECT   18   10
+CONECT   19   10
 CONECT   20    2
 CONECT   21    4
 CONECT   22    6
