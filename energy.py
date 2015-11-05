@@ -163,7 +163,7 @@ def assign_params(atom_types):
             if len(neighbors) == 2:
                 params[at_index] = SRA_model['ether_hydroxyl O']
             else:
-                params[at_index] = SRA_model['Carboxylic O']
+                params[at_index] = SRA_model['carboxylic O']
             # C=O
             # C=O of ester
             # O de la amide
