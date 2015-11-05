@@ -16,13 +16,13 @@ path = os.path.dirname(__file__)
 sys.path.append(path)
 from torsionals import get_phi, get_psi
 
-def analyse(type_analysis, selection, from_state, to_state,  visual, by_state):
+def analyse(type_analysis, selection, from_state, to_state,  step, visual, by_state):
     if type_analysis == 'Rama scatter':
-        rama_plot(selection, from_state, to_state, scatter=True)
+        rama_plot(selection, from_state, to_state, step, scatter=True)
     elif type_analysis == 'Rama hex':
-        rama_plot(selection, from_state, to_state, scatter=False)
+        rama_plot(selection, from_state, to_state, step, scatter=False)
     elif type_analysis == ' Rg':
-        r_gyration(selection, from_state, to_state,  visual, by_state)
+        r_gyration(selection, from_state, to_state,  step, visual, by_state)
 
 
 def pose_from_pdb(pdb_file):
@@ -66,7 +66,7 @@ def writer(bonds):
     return con_matrix
 
 
-def r_gyration(selection='all', from_state=1, to_state=1,  visual=True, by_state=True):
+def r_gyration(selection='all', from_state=1, to_state=1, step=1, visual=True, by_state=True):
     """
     Calculates radius of gyration for a PyMOL object
     
@@ -81,7 +81,7 @@ def r_gyration(selection='all', from_state=1, to_state=1,  visual=True, by_state
     fd = open('Rg.dat', 'w')
     radii = []
     centers = []
-    for state in range(from_state, to_state+1):
+    for state in range(from_state, to_state+1, step):
         model = cmd.get_model(selection, state)
         xyz = np.array(model.get_coord_list())
         center = np.average(xyz, 0)
@@ -100,15 +100,21 @@ def r_gyration(selection='all', from_state=1, to_state=1,  visual=True, by_state
     print 'Rg_mean = %8.2f\n' % rg_mean
 
     if visual:
+        cmd.delete('sphere_rg')
         r, g, b = 0, 0, 1
         if by_state:
             cmd.set('defer_updates', 'on')
-            for state in range(from_state, to_state+1):
-                x1, y1, z1 = tuple(centers[state-1])
-                radius = radii[state-1]
+            count = 0
+            for state in range(from_state, to_state+1, step):
+                x1, y1, z1 = tuple(centers[count])
+                radius = radii[count]
                 obj = [COLOR, r, g, b, SPHERE, x1, y1, z1, radius]
-                cmd.load_cgo(obj,'sphere_rg', state+1)
+                cmd.load_cgo(obj,'sphere_rg', state)
+                count += 1
             cmd.set('defer_updates', 'off')
+            # workaround. find a better way to fix the cgo persistent for the last states
+            for i in range(state+1, to_state+1):
+                cmd.load_cgo([],'sphere_rg', i)        
         else:
             x1, y1, z1 = tuple(centers_mean)
             radius = rg_mean
@@ -116,7 +122,7 @@ def r_gyration(selection='all', from_state=1, to_state=1,  visual=True, by_state
             cmd.load_cgo(obj,'sphere_rg')
 
 
-def rama_plot(selection='all', from_state=1, to_state=1, scatter=True):
+def rama_plot(selection='all', from_state=1, to_state=1, step=1, scatter=True):
     """ 
     Makes a scatter plot with the phi and psi angle pairs
     """
@@ -128,7 +134,7 @@ def rama_plot(selection='all', from_state=1, to_state=1, scatter=True):
     
         phi = []
         psi = []
-        for state in range(from_state, to_state+1):
+        for state in range(from_state, to_state+1, step):
             for element in con_matrix:
                 phi.append(get_phi(selection, element, state))
                 psi.append(get_psi(selection, element, state))
