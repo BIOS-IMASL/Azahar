@@ -14,16 +14,17 @@ from pymol.cgo import *
 import os, sys
 path = os.path.dirname(__file__)
 sys.path.append(path)
-from torsionals import get_phi, get_psi
+#from torsionals import get_phi, get_psi
 
-def analyse(type_analysis, selection, from_state, to_state,  step, visual, by_state):
+def analyse(type_analysis, selection, from_state, to_state,  visual, by_state):
     if type_analysis == 'Rama scatter':
-        rama_plot(selection, from_state, to_state, step, scatter=True)
+        rama_plot(selection, from_state, to_state, scatter=True)
     elif type_analysis == 'Rama hex':
-        rama_plot(selection, from_state, to_state, step, scatter=False)
+        rama_plot(selection, from_state, to_state, scatter=False)
     elif type_analysis == ' Rg':
-        r_gyration(selection, from_state, to_state,  step, visual, by_state)
-
+        r_gyration(selection, from_state, to_state,  visual, by_state)
+    elif type_analysis == ' Hydro pairs':
+        hydro_pairs(selection)
 
 def pose_from_pdb(pdb_file):
     """
@@ -66,7 +67,7 @@ def writer(bonds):
     return con_matrix
 
 
-def r_gyration(selection='all', from_state=1, to_state=1, step=1, visual=True, by_state=True):
+def r_gyration(selection='all', from_state=1, to_state=1,  visual=True, by_state=True):
     """
     Calculates radius of gyration for a PyMOL object
     
@@ -81,7 +82,7 @@ def r_gyration(selection='all', from_state=1, to_state=1, step=1, visual=True, b
     fd = open('Rg.dat', 'w')
     radii = []
     centers = []
-    for state in range(from_state, to_state+1, step):
+    for state in range(from_state, to_state+1):
         model = cmd.get_model(selection, state)
         xyz = np.array(model.get_coord_list())
         center = np.average(xyz, 0)
@@ -100,21 +101,15 @@ def r_gyration(selection='all', from_state=1, to_state=1, step=1, visual=True, b
     print 'Rg_mean = %8.2f\n' % rg_mean
 
     if visual:
-        cmd.delete('sphere_rg')
         r, g, b = 0, 0, 1
         if by_state:
             cmd.set('defer_updates', 'on')
-            count = 0
-            for state in range(from_state, to_state+1, step):
-                x1, y1, z1 = tuple(centers[count])
-                radius = radii[count]
+            for state in range(from_state, to_state+1):
+                x1, y1, z1 = tuple(centers[state-1])
+                radius = radii[state-1]
                 obj = [COLOR, r, g, b, SPHERE, x1, y1, z1, radius]
-                cmd.load_cgo(obj,'sphere_rg', state)
-                count += 1
+                cmd.load_cgo(obj,'sphere_rg', state+1)
             cmd.set('defer_updates', 'off')
-            # workaround. find a better way to fix the cgo persistent for the last states
-            for i in range(state+1, to_state+1):
-                cmd.load_cgo([],'sphere_rg', i)        
         else:
             x1, y1, z1 = tuple(centers_mean)
             radius = rg_mean
@@ -122,7 +117,7 @@ def r_gyration(selection='all', from_state=1, to_state=1, step=1, visual=True, b
             cmd.load_cgo(obj,'sphere_rg')
 
 
-def rama_plot(selection='all', from_state=1, to_state=1, step=1, scatter=True):
+def rama_plot(selection='all', from_state=1, to_state=1, scatter=True):
     """ 
     Makes a scatter plot with the phi and psi angle pairs
     """
@@ -134,7 +129,7 @@ def rama_plot(selection='all', from_state=1, to_state=1, step=1, scatter=True):
     
         phi = []
         psi = []
-        for state in range(from_state, to_state+1, step):
+        for state in range(from_state, to_state+1):
             for element in con_matrix:
                 phi.append(get_phi(selection, element, state))
                 psi.append(get_psi(selection, element, state))
@@ -153,4 +148,56 @@ def rama_plot(selection='all', from_state=1, to_state=1, step=1, scatter=True):
         plt.xlim(-180, 180) 
         plt.ylim(-180, 180)
         plt.show()
+        
+def hydro_pairs(selection):
+    """
+    Find hydrogen bonds for a given selection
+    
+    """
+    states=cmd.count_states(selection)                 
+    for i in range(1, states+1):        
+        hb.append(cmd.find_pairs("(byres %s) and (name O* and neighbor elem H) or (name N* and neighbor elem H)"%(selection), 
+                                 "(byres %s) and name N* or name O*"%(selection),  
+                                cutoff = 3.5, mode =1, angle=40, state1=i))              
+    hb.sort()
+    seen = {}
+    for state in hb:        
+        for pairs in state:            
+            if pairs in seen:
+                seen[pairs] = seen[pairs] + 1
+            else:
+                seen[pairs] = 1                           
+    occurrence = seen.items()
+    occurrence.sort(key=lambda x:x[1], reverse=True)
+    
+    fd=open("Hydrogen pairs.txt", "w")
+    
+    fd.write("--------------------------------------------------------------------\n")
+    fd.write("-----------------------------Results--------------------------------\n")
+    fd.write("--------------------------------------------------------------------\n")
+    fd.write("            Donor             |            Aceptor           |\n")
+    fd.write("   Object  Residue  Atom Index|   Object  Residue  Atom Index| occurrence\n")
+    
+    stored.donors = []
+    stored.aceptors = []
+    
+    for i in range (len(occurrence)):
+        
+        cmd.iterate("index %s"%(occurrence[i][0][0][1]), 
+                    "stored.donors.append((resn, elem))")
+                    
+        cmd.iterate("index %s"%(occurrence[i][0][1][1]), 
+                    "stored.aceptors.append((resn, elem))")
+        
+        
+        fd.write( "%8s%8s%6s%8s|%8s%8s%6s%8s|%5s\n"%(occurrence[i][0][0][0],
+                                 stored.donors[i][0],
+                                 stored.donors[i][1],
+                                 occurrence[i][0][0][1],
+                                 occurrence[i][0][1][0],
+                                 stored.aceptors[i][0],
+                                 stored.aceptors[i][1],
+                                 occurrence[i][0][1][1],
+                                 occurrence[i][1]))
+    fd.close()
 
