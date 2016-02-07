@@ -216,7 +216,7 @@ def mainDialog():
     Pmw.OptionMenu(group.interior(),
         labelpos = 'w',
         menubutton_textvariable = type_analysis,
-        items = ['Rama scatter', 'Rama hex', ' Rg', 'Hydro pairs'], 
+        items = ['Rama scatter', 'Rama hex', ' Rg', 'Hydrogen_bonds'], 
         menubutton_width = 12,
         ).grid(row=0, column=1)
     

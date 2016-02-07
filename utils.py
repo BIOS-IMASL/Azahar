@@ -23,7 +23,7 @@ def analyse(type_analysis, selection, from_state, to_state,  step, visual, by_st
         rama_plot(selection, from_state, to_state, step, scatter=False)
     elif type_analysis == ' Rg':
         r_gyration(selection, from_state, to_state,  step, visual, by_state)
-    elif type_analysis == ' Hydrogen_bonds':
+    elif type_analysis == 'Hydrogen_bonds':
         hydro_pairs(selection)
 
 def pose_from_pdb(pdb_file):
@@ -159,7 +159,8 @@ def hydro_pairs(selection):
     """
     Find hydrogen bonds for a given selection
     """
-    states = cmd.count_states(selection)                 
+    states = cmd.count_states(selection)
+    hb = []               
     for i in range(1, states+1):        
         hb.append(cmd.find_pairs("(byres %s) and (name O* and neighbor elem H) or (name N* and neighbor elem H)"%(selection), 
                                  "(byres %s) and name N* or name O*"%(selection),  
@@ -175,7 +176,7 @@ def hydro_pairs(selection):
     occurrence = seen.items()
     occurrence.sort(key=lambda x:x[1], reverse=True)
     
-    fd = open("Hydrogen pairs.txt", "w")
+    fd = open("Hydrogen_bonds.dat", "w")
     
     fd.write("--------------------------------------------------------------------\n")
     fd.write("-----------------------------Results--------------------------------\n")
@@ -187,15 +188,11 @@ def hydro_pairs(selection):
     stored.aceptors = []
     
     for i in range (len(occurrence)):
-        
         cmd.iterate("index %s"%(occurrence[i][0][0][1]), 
-                    "stored.donors.append((resn, elem))")
-                    
+                    "stored.donors.append((resn, elem))")        
         cmd.iterate("index %s"%(occurrence[i][0][1][1]), 
                     "stored.aceptors.append((resn, elem))")
-        
-        
-        fd.write( "%8s%8s%6s%8s|%8s%8s%6s%8s|%5s\n"%(occurrence[i][0][0][0],
+        fd.write( "%8s%8s%6s%8s|%8s%8s%6s%8s|%5s\n" % (occurrence[i][0][0][0],
                                  stored.donors[i][0],
                                  stored.donors[i][1],
                                  occurrence[i][0][0][1],
