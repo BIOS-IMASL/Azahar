@@ -1,7 +1,6 @@
 """
 BioModelBuilder
 Described at PyMOL wiki: http://www.pymolwiki.org/index.php/Azahar
-
 Authors: Agustina Arroyuelo and Osvaldo Martin
 email: agustinaarroyuelo@gmail.com, aloctavodia@gmail.com
 Date: august 2015
@@ -217,7 +216,7 @@ def mainDialog():
     Pmw.OptionMenu(group.interior(),
         labelpos = 'w',
         menubutton_textvariable = type_analysis,
-        items = ['Rama scatter', 'Rama hex', ' Rg', 'Hydro pairs'],
+        items = ['Rama scatter', 'Rama hex', ' Rg', 'Hydro pairs'], 
         menubutton_width = 12,
         ).grid(row=0, column=1)
     
@@ -236,29 +235,35 @@ def mainDialog():
     from_state.set(1)
     entry_from_state = Entry(group.interior(), textvariable=from_state, width=12)
     entry_from_state.grid(row=2, column=1)
-    #entry_from_state.update()
+
     Label(group.interior(), text='To state').grid(row=3, column=0)
     to_state = IntVar(master=group.interior())
     to_state.set(cmd.count_states(sel0_value.get()))
     entry_to_state = Entry(group.interior(), textvariable=to_state, width=12)
     entry_to_state.grid(row=3, column=1)
-    #entry_to_state.update()
 
-    Label(group.interior(), text='Rg Visualization').grid(row=4, column=0)    
+    Label(group.interior(), text='step').grid(row=4, column=0)
+    step = IntVar(master=group.interior())
+    step.set(1)
+    entry_step = Entry(group.interior(), textvariable=step, width=12)
+    entry_step.grid(row=4, column=1)
+
+
+    Label(group.interior(), text='Rg Visualization').grid(row=5, column=0)    
     vis_rg_value = BooleanVar(master=group.interior())
     vis_rg_value.set(False)
     entry_rg = Checkbutton(group.interior(), variable=vis_rg_value, command=enable_disable)
-    entry_rg.grid(row=4, column=1)
+    entry_rg.grid(row=5, column=1)
     entry_rg.update()
     by_state_value = BooleanVar(master=group.interior())
     by_state_value.set(False)
     entry_by_state = Checkbutton(group.interior(), text='By state', variable=by_state_value)
-    entry_by_state.grid(row=5, columnspan=1)
+    entry_by_state.grid(row=6, columnspan=1)
     entry_by_state.configure(state='disabled')
     entry_by_state.update()
     
 
-    Button(p3, text="run analysis", command=lambda: analyse(type_analysis.get(), sel0_value.get(), int(entry_from_state.get()), int(entry_to_state.get()),  vis_rg_value.get(), by_state_value.get())).pack()
+    Button(p3, text="run analysis", command=lambda: analyse(type_analysis.get(), sel0_value.get(), int(entry_from_state.get()), int(entry_to_state.get()),  int(entry_step.get()), vis_rg_value.get(), by_state_value.get())).pack()
     ############################## MCM TAB ####################################
     group = Pmw.Group(p4, tag_text='options')
     group.pack(fill='both', expand=1, padx=5, pady=5)
@@ -300,7 +305,6 @@ def mainDialog():
 Arroyuelo and Osvaldo Martin as part of the
 Warren L. DeLano Memorial PyMOL 
 Open-Source Fellowship.
-
 For instructions on how to use this plugin, please
 read:
 http://www.pymolwiki.org/index.php/Azahar
@@ -314,6 +318,4 @@ http://www.pymolwiki.org/index.php/Azahar
     bar.pack(side=LEFT,expand="yes",fill="y")
     interior_frame.pack(expand="yes",fill="both")
 
-    master.mainloop()      
-    
-    
+    master.mainloop() 
