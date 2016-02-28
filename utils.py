@@ -182,16 +182,22 @@ def hydro_pairs(selection):
     fd.write("-----------------------------Results--------------------------------\n")
     fd.write("--------------------------------------------------------------------\n")
     fd.write("            Donor             |            Aceptor           |\n")
-    fd.write("   Object  Residue  Atom Index|   Object  Residue  Atom Index| occurrence\n")
+    fd.write("   Object  Residue  Atom Index|   Object  Residue  Atom Index| % occurrence\n")
     
     stored.donors = []
     stored.aceptors = []
+    sub = [] 
     
+    for i in range (len(occurrence)):
+        sub.append(occurrence[i][1]) 
+    total = sum(sub)
+        
     for i in range (len(occurrence)):
         cmd.iterate("index %s"%(occurrence[i][0][0][1]), 
                     "stored.donors.append((resn, elem))")        
         cmd.iterate("index %s"%(occurrence[i][0][1][1]), 
                     "stored.aceptors.append((resn, elem))")
+        
         fd.write( "%8s%8s%6s%8s|%8s%8s%6s%8s|%5s\n" % (occurrence[i][0][0][0],
                                  stored.donors[i][0],
                                  stored.donors[i][1],
@@ -200,5 +206,5 @@ def hydro_pairs(selection):
                                  stored.aceptors[i][0],
                                  stored.aceptors[i][1],
                                  occurrence[i][0][1][1],
-                                 occurrence[i][1]))
+                                 "%.2f"%(occurrence[i][1]*100/total)))
     fd.close()
