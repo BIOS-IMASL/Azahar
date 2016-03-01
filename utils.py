@@ -155,7 +155,7 @@ def rama_plot(selection='all', from_state=1, to_state=1, step=1, scatter=True):
         plt.ylim(-180, 180)
         plt.show()
         
-def hydro_pairs(selection):
+def hydro_pairs(selection, cut_off):
     """
     Find hydrogen bonds for a given selection
     """
@@ -198,17 +198,19 @@ def hydro_pairs(selection):
                     "stored.donors.append((resn, elem))")        
         cmd.iterate("index %s"%(occurrence[i][0][1][1]), 
                     "stored.aceptors.append((resn, elem))")
-        
-        fd.write( "%8s%8s%6s%8s|%8s%8s%6s%8s|%5s\n" % (occurrence[i][0][0][0],
-                                 stored.donors[i][0],
-                                 stored.donors[i][1],
-                                 occurrence[i][0][0][1],
-                                 occurrence[i][0][1][0],
-                                 stored.aceptors[i][0],
-                                 stored.aceptors[i][1],
-                                 occurrence[i][0][1][1],
-                                 "%.2f"%(occurrence[i][1]*100/total)))
-                                 
-        cmd.color("purple","index %s or index %s"%(occurrence[i][0][0][1],
-                                           occurrence[i][0][1][1]))
+        if (occurrence[i][1]*100/total) >= cut_off:
+            fd.write( "%8s%8s%6s%8s|%8s%8s%6s%8s|%5s\n" % (occurrence[i][0][0][0],
+                                     stored.donors[i][0],
+                                     stored.donors[i][1],
+                                     occurrence[i][0][0][1],
+                                     occurrence[i][0][1][0],
+                                     stored.aceptors[i][0],
+                                     stored.aceptors[i][1],
+                                     occurrence[i][0][1][1],
+                                     "%.2f"%(occurrence[i][1]*100/total)))
+                                     
+            cmd.color("purple","index %s or index %s"%(occurrence[i][0][0][1],
+                                               occurrence[i][0][1][1]))
     fd.close()
+                           
+hydro_pairs("all", 10)
