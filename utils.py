@@ -24,7 +24,7 @@ def analyse(type_analysis, selection, from_state, to_state,  step, visual, by_st
     elif type_analysis == ' Rg':
         r_gyration(selection, from_state, to_state,  step, visual, by_state)
     elif type_analysis == 'Hydrogen_bonds':
-        hydro_pairs(selection)
+        hydro_pairs(selection, cut_off)
 
 def pose_from_pdb(pdb_file):
     """
