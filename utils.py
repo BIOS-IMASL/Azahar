@@ -159,6 +159,7 @@ def hydro_pairs(selection):
     """
     Find hydrogen bonds for a given selection
     """
+    cmd.color("yellow", "all")
     states = cmd.count_states(selection)
     hb = []               
     for i in range(1, states+1):        
@@ -207,4 +208,7 @@ def hydro_pairs(selection):
                                  stored.aceptors[i][1],
                                  occurrence[i][0][1][1],
                                  "%.2f"%(occurrence[i][1]*100/total)))
+                                 
+        cmd.color("purple","index %s or index %s"%(occurrence[i][0][0][1],
+                                           occurrence[i][0][1][1]))
     fd.close()
