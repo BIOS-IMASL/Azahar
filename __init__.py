@@ -247,6 +247,12 @@ def mainDialog():
     step.set(1)
     entry_step = Entry(group.interior(), textvariable=step, width=12)
     entry_step.grid(row=4, column=1)
+    
+    Label(group.interior(), text='Cut off').grid(row=4, column=2)
+    cut_off = IntVar(master=group.interior())
+    cut_off.set(0)
+    entry_cut_off = Entry(group.interior(), textvariable=cut_off, width=12)
+    entry_cut_off.grid(row=4, column=3)
 
 
     Label(group.interior(), text='Rg Visualization').grid(row=5, column=0)    
@@ -263,7 +269,7 @@ def mainDialog():
     entry_by_state.update()
     
 
-    Button(p3, text="run analysis", command=lambda: analyse(type_analysis.get(), sel0_value.get(), int(entry_from_state.get()), int(entry_to_state.get()),  int(entry_step.get()), vis_rg_value.get(), by_state_value.get())).pack()
+    Button(p3, text="run analysis", command=lambda: analyse(type_analysis.get(), sel0_value.get(), int(entry_from_state.get()), int(entry_to_state.get()), int(entry_cut_off.get()),int(entry_step.get()), vis_rg_value.get(), by_state_value.get())).pack()
     ############################## MCM TAB ####################################
     group = Pmw.Group(p4, tag_text='options')
     group.pack(fill='both', expand=1, padx=5, pady=5)

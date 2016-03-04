@@ -16,7 +16,7 @@ path = os.path.dirname(__file__)
 sys.path.append(path)
 from torsionals import get_phi, get_psi
 
-def analyse(type_analysis, selection, from_state, to_state,  step, visual, by_state):
+def analyse(type_analysis, selection, from_state, to_state,  step, visual, by_state, cut_off):
     if type_analysis == 'Rama scatter':
         rama_plot(selection, from_state, to_state, step, scatter=True)
     elif type_analysis == 'Rama hex':
@@ -212,5 +212,4 @@ def hydro_pairs(selection, cut_off):
             cmd.color("purple","index %s or index %s"%(occurrence[i][0][0][1],
                                                occurrence[i][0][1][1]))
     fd.close()
-                           
-hydro_pairs("all", 10)
+                          
