@@ -161,14 +161,13 @@ def hydro_pairs(selection, cut_off):
     """
     Find hydrogen bonds for a given selection
     """
-    cmd.color("yellow", "all")
     states = cmd.count_states(selection)
     hb = []               
     for i in range(1, states+1):        
-        hb.append(cmd.find_pairs("(byres %s) and (name O* and neighbor elem H) or (name N* and neighbor elem H)"%(selection), 
-                                 "(byres %s) and name N* or name O*"%(selection),  
-                                cutoff = 3.5, mode =1, angle=40, state1=i))              
-    hb.sort()
+        hb.append(cmd.find_pairs("%s and (name O* and neighbor elem H) or (name N* and neighbor elem H)"%(selection), 
+                                 "%s and name N* or name O*"%(selection),  
+                                cutoff = 3.5, mode=1, angle=40, state1=i, state2=i))
+
     seen = {}
     for state in hb:        
         for pairs in state:            
@@ -179,6 +178,7 @@ def hydro_pairs(selection, cut_off):
     occurrence = seen.items()
     occurrence.sort(key=lambda x:x[1], reverse=True)
     
+
     fd = open("Hydrogen_bonds.dat", "w")
     
     fd.write("--------------------------------------------------------------------\n")
@@ -190,17 +190,14 @@ def hydro_pairs(selection, cut_off):
     stored.donors = []
     stored.aceptors = []
     sub = [] 
-    
-    for i in range (len(occurrence)):
-        sub.append(occurrence[i][1]) 
-    total = sum(sub)
-        
+ 
+    occurrence_list = []
     for i in range (len(occurrence)):
         cmd.iterate("index %s"%(occurrence[i][0][0][1]), 
                     "stored.donors.append((resn, elem))")        
         cmd.iterate("index %s"%(occurrence[i][0][1][1]), 
                     "stored.aceptors.append((resn, elem))")
-        if (occurrence[i][1]*100/total) >= cut_off:
+        if (occurrence[i][1]*100/states) >= cut_off:
             fd.write( "%8s%8s%6s%8s|%8s%8s%6s%8s|%5s\n" % (occurrence[i][0][0][0],
                                      stored.donors[i][0],
                                      stored.donors[i][1],
@@ -209,9 +206,15 @@ def hydro_pairs(selection, cut_off):
                                      stored.aceptors[i][0],
                                      stored.aceptors[i][1],
                                      occurrence[i][0][1][1],
-                                     "%.2f"%(occurrence[i][1]*100/total)))
-                                     
-            cmd.color("purple","index %s or index %s"%(occurrence[i][0][0][1],
-                                               occurrence[i][0][1][1]))
+                                     "%.2f"%(occurrence[i][1]*100/states)))
+            occurrence_list.append(occurrence[i][0])
     fd.close()
+
+    cmd.set('suspend_updates', 'on')
+    for state, bonds in enumerate(hb):
+        for bond in bonds:
+            if bond in occurrence_list:
+                cmd.distance('HB', 'index %s' % bond[0][1], 'index %s' % bond[1][1], state=state, cutoff=3.5)
+    cmd.hide("labels","HB")
+    cmd.set('suspend_updates', 'off')
                           
