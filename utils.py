@@ -26,6 +26,7 @@ def analyse(type_analysis, selection, from_state, to_state,  step, visual, by_st
     elif type_analysis == 'Hydrogen_bonds':
         hydro_pairs(selection, cut_off)
 
+
 def pose_from_pdb(pdb_file):
     """
     Obtain residue indexes 
@@ -154,7 +155,8 @@ def rama_plot(selection='all', from_state=1, to_state=1, step=1, scatter=True):
         plt.xlim(-180, 180) 
         plt.ylim(-180, 180)
         plt.show()
-        
+
+ 
 def hydro_pairs(selection, cut_off):
     """
     Find hydrogen bonds for a given selection
