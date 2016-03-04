@@ -85,13 +85,21 @@ def mainDialog():
         total_res.set(0)  
     
 
-    def enable_disable():
+    def enable_disable_rg():
         """enables the checkbutton by_state if rg visualization is enabled and 
         if there is more than one state to visualize"""
         if vis_rg_value.get() and (to_state.get() - from_state.get())  > 1:
             entry_by_state.configure(state='normal')
         else:
             entry_by_state.configure(state='disabled')
+        entry_by_state.update()
+        
+    def enable_disable_cutoff(items):
+        """enables the cut_off entry if the Hydrogen_bonds computation is selected"""
+        if items == 'Hydrogen_bonds':
+            entry_cut_off.configure(state='normal')
+        else:
+            entry_cut_off.configure(state='disabled')
         entry_by_state.update()
 
     ############################ Create the GUI ################################
@@ -218,6 +226,7 @@ def mainDialog():
         menubutton_textvariable = type_analysis,
         items = ['Rama scatter', 'Rama hex', ' Rg', 'Hydrogen_bonds'], 
         menubutton_width = 12,
+        command=enable_disable_cutoff,
         ).grid(row=0, column=1)
     
     
@@ -253,12 +262,13 @@ def mainDialog():
     cut_off.set(0)
     entry_cut_off = Entry(group.interior(), textvariable=cut_off, width=12)
     entry_cut_off.grid(row=4, column=3)
-
+    entry_cut_off.configure(state='disabled')
+    entry_cut_off.update()
 
     Label(group.interior(), text='Rg Visualization').grid(row=5, column=0)    
     vis_rg_value = BooleanVar(master=group.interior())
     vis_rg_value.set(False)
-    entry_rg = Checkbutton(group.interior(), variable=vis_rg_value, command=enable_disable)
+    entry_rg = Checkbutton(group.interior(), variable=vis_rg_value, command=enable_disable_rg)
     entry_rg.grid(row=5, column=1)
     entry_rg.update()
     by_state_value = BooleanVar(master=group.interior())
@@ -269,7 +279,7 @@ def mainDialog():
     entry_by_state.update()
     
 
-    Button(p3, text="run analysis", command=lambda: analyse(type_analysis.get(), sel0_value.get(), int(entry_from_state.get()), int(entry_to_state.get()), int(entry_cut_off.get()),int(entry_step.get()), vis_rg_value.get(), by_state_value.get())).pack()
+    Button(p3, text="run analysis", command=lambda: analyse(type_analysis.get(), sel0_value.get(), int(entry_from_state.get()), int(entry_to_state.get()), int(entry_step.get()), vis_rg_value.get(), by_state_value.get(), int(entry_cut_off.get()))).pack()
     ############################## MCM TAB ####################################
     group = Pmw.Group(p4, tag_text='options')
     group.pack(fill='both', expand=1, padx=5, pady=5)
