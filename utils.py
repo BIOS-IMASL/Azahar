@@ -217,4 +217,4 @@ def hydro_pairs(selection, cut_off):
                 cmd.distance('HB', 'index %s' % bond[0][1], 'index %s' % bond[1][1], state=state, cutoff=3.5)
     cmd.hide("labels","HB")
     cmd.set('suspend_updates', 'off')
-                          
+    print "Check working directory for Hydrogen bonds text file report"                      
