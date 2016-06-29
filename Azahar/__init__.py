@@ -30,10 +30,10 @@ def __init__(self):
     self.menuBar.addmenuitem('Plugin', 'command',
                              'Azahar',
                              label = 'Azahar',
-                             command = lambda : mainDialog())
+                             command = lambda : mainDialog(self.root))
 
                                      
-def mainDialog():
+def mainDialog(root=None):
     """ Creates the GUI """
 
     ################# Define some necessary functions #########################
@@ -103,7 +103,7 @@ def mainDialog():
         entry_by_state.update()
 
     ############################ Create the GUI ################################
-    master = Tk()
+    master = Toplevel(root)
     master.title("Azahar")
     w = Tkinter.Label(master, text="\nLife is Sweet.\n",
                                 background = 'black',
@@ -333,5 +333,3 @@ http://www.pymolwiki.org/index.php/Azahar
     text_holder.pack(side=LEFT,expand="yes",fill="both")
     bar.pack(side=LEFT,expand="yes",fill="y")
     interior_frame.pack(expand="yes",fill="both")
-
-    master.mainloop() 
