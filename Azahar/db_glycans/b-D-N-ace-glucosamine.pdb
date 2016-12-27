@@ -1,0 +1,61 @@
+ATOM      1  C1  NAG A   0       1.618  -1.459  -0.164  1.00  0.00           C  
+ATOM      2  O1  NAG A   0       3.012  -1.513  -0.480  1.00  0.00           O  
+ATOM      3  C2  NAG A   0       1.455  -0.913   1.274  1.00  0.00           C  
+ATOM      4  N2  NAG A   0       2.062  -1.834   2.246  1.00  0.00           N  
+ATOM      5  C3  NAG A   0      -0.035  -0.681   1.579  1.00  0.00           C  
+ATOM      6  O3  NAG A   0      -0.185   0.021   2.825  1.00  0.00           O  
+ATOM      7  C4  NAG A   0      -0.687   0.159   0.471  1.00  0.00           C  
+ATOM      8  O4  NAG A   0      -2.086   0.274   0.759  1.00  0.00           O  
+ATOM      9  C5  NAG A   0      -0.432  -0.488  -0.898  1.00  0.00           C  
+ATOM     10  C6  NAG A   0      -1.000   0.349  -2.049  1.00  0.00           C  
+ATOM     11  O6  NAG A   0      -0.440   1.661  -2.041  1.00  0.00           O  
+ATOM     12  C7  NAG A   0       2.869  -1.551   3.304  1.00  0.00           C  
+ATOM     13  O7  NAG A   0       3.254  -0.397   3.481  1.00  0.00           O  
+ATOM     14  C8  NAG A   0       3.223  -2.662   4.252  1.00  0.00           C  
+ATOM     15  OR  NAG A   0       0.982  -0.627  -1.129  1.00  0.00           O  
+ATOM     16  H1  NAG A   0       1.222  -2.472  -0.238  1.00  0.00           H  
+ATOM     17  H2  NAG A   0       1.964   0.055   1.338  1.00  0.00           H  
+ATOM     18  H3  NAG A   0      -0.563  -1.636   1.696  1.00  0.00           H  
+ATOM     19  H4  NAG A   0      -0.261   1.170   0.516  1.00  0.00           H  
+ATOM     20  H5  NAG A   0      -0.912  -1.474  -0.950  1.00  0.00           H  
+ATOM     21  H1o NAG A   0       3.281  -0.684  -0.883  1.00  0.00           H  
+ATOM     22  H81 NAG A   0       3.743  -3.464   3.723  1.00  0.00           H  
+ATOM     23  H2n NAG A   0       1.796  -2.812   2.181  1.00  0.00           H  
+ATOM     24  H82 NAG A   0       2.317  -3.051   4.724  1.00  0.00           H  
+ATOM     25  H83 NAG A   0       3.884  -2.277   5.034  1.00  0.00           H  
+ATOM     26  H3o NAG A   0      -1.145   0.184   2.910  1.00  0.00           H  
+ATOM     27  H6R NAG A   0      -2.088   0.441  -1.978  1.00  0.00           H  
+ATOM     28  H6S NAG A   0      -0.755  -0.106  -3.015  1.00  0.00           H  
+ATOM     29  H4o NAG A   0      -2.413   1.049   0.263  1.00  0.00           H  
+ATOM     30  H6o NAG A   0       0.522   1.539  -2.151  1.00  0.00           H  
+CONECT    1    2    3   15   16
+CONECT    2    1   21
+CONECT    3    1    4    5   17
+CONECT    4    3   12   23
+CONECT    5    3    6    7   18
+CONECT    6    5   26
+CONECT    7    5    8    9   19
+CONECT    8    7   29
+CONECT    9    7   10   15   20
+CONECT   10    9   11   27   28
+CONECT   11   10   30
+CONECT   12    4   13   14
+CONECT   13   12
+CONECT   14   12   22   24   25
+CONECT   15    1    9
+CONECT   16    1
+CONECT   17    3
+CONECT   18    5
+CONECT   19    7
+CONECT   20    9
+CONECT   21    2
+CONECT   22   14
+CONECT   23    4
+CONECT   24   14
+CONECT   25   14
+CONECT   26    6
+CONECT   27   10
+CONECT   28   10
+CONECT   29    8
+CONECT   30   11
+END
