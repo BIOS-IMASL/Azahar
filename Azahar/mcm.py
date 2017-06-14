@@ -1,7 +1,11 @@
 from __future__ import division
 import pymol
 from pymol import cmd
-import tkMessageBox
+import sys
+if sys.version_info[0] < 3:
+    import tkMessageBox
+else:
+    from tkinter import messagebox as tkMessageBox
 import numpy as np
 import threading
 import glob, os, sys

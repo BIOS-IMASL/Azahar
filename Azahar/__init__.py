@@ -9,12 +9,17 @@ Version 0.8
 """
  
  
-import Tkinter
-from Tkinter import *
-import tkMessageBox
+import sys
+if sys.version_info[0] < 3:
+    import Tkinter
+    import tkMessageBox
+else:
+    import tkinter as Tkinter
+    from tkinter import messagebox as tkMessageBox
+
 import Pmw
 from pymol import cmd
-import os, sys
+import os
 import numpy as np
 path = os.path.dirname(__file__)
 sys.path.append(path)

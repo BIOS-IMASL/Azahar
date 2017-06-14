@@ -99,7 +99,7 @@ def r_gyration(selection='all', from_state=1, to_state=1, step=1, visual=True, b
         centers_mean = np.nan
     fd.write('Rg_mean = %8.2f\n'% rg_mean)   
     fd.close()
-    print 'Rg_mean = %8.2f\n' % rg_mean
+    print ('Rg_mean = %8.2f\n' % rg_mean)
 
     if visual:
         cmd.delete('sphere_rg')
@@ -217,4 +217,4 @@ def hydro_pairs(selection, cut_off):
                 cmd.distance('HB', 'index %s' % bond[0][1], 'index %s' % bond[1][1], state=state, cutoff=3.5)
     cmd.hide("labels","HB")
     cmd.set('suspend_updates', 'off')
-    print "Check working directory for Hydrogen bonds text file report"                      
+    print ("Check working directory for Hydrogen bonds text file report")                      
