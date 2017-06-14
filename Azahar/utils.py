@@ -9,10 +9,13 @@ import pymol
 from pymol import cmd, stored
 import numpy as np
 import matplotlib.pyplot as plt
-import tkMessageBox
+import sys
+if sys.version_info[0] < 3:
+    import tkMessageBox
+else:
+    from tkinter import messagebox as tkMessageBox
 from pymol.cgo import *
 import os
-import sys
 path = os.path.dirname(__file__)
 sys.path.append(path)
 from torsionals import get_phi, get_psi

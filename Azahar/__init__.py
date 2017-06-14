@@ -105,7 +105,7 @@ def mainDialog(root=None):
         entry_by_state.update()
 
     ############################ Create the GUI ##############################
-    master = Toplevel(root)
+    master = Tkinter.Toplevel(root)
     master.title("Azahar")
     w = Tkinter.Label(master, text="\nLife is Sweet.\n",
                       background='black',
@@ -120,12 +120,12 @@ def mainDialog(root=None):
     p3 = nb.add('Calculations')
     p4 = nb.add('Monte Carlo')
     p10 = nb.add('    About   ')
-    nb.pack(padx=5, pady=5, fill=BOTH, expand=1)
+    nb.pack(padx=5, pady=5, fill=Tkinter.BOTH, expand=1)
     ############################ Creation TAB ################################
     group = Pmw.Group(p1, tag_text='options')
     group.pack(fill='both', expand=1, padx=5, pady=5)
     # Select first residue
-    selected_res0 = StringVar(master=group.interior())
+    selected_res0 = Tkinter.StringVar(master=group.interior())
     selected_res0.set('a-D-glucose')
 
     residues_templates = sorted([os.path.splitext(x)[0]
@@ -138,7 +138,7 @@ def mainDialog(root=None):
                    menubutton_width=18,
                    ).grid(row=0, columnspan=2)
     # Select Bond
-    selected_bond = StringVar(master=group.interior())
+    selected_bond = Tkinter.StringVar(master=group.interior())
     selected_bond.set("(1,4)")
     Pmw.OptionMenu(group.interior(),
                    labelpos='w',
@@ -149,7 +149,7 @@ def mainDialog(root=None):
                    menubutton_width=18,
                    ).grid(row=1, columnspan=2)
     # Select Second residue
-    selected_res1 = StringVar(master=group.interior())
+    selected_res1 = Tkinter.StringVar(master=group.interior())
     selected_res1.set("a-D-glucose")
     Pmw.OptionMenu(group.interior(),
                    labelpos='w',
@@ -159,53 +159,53 @@ def mainDialog(root=None):
                    menubutton_width=18,
                    ).grid(row=2, columnspan=2)
     # Select Repetitions
-    Label(group.interior(), text='Repetitions').grid(row=3, column=0)
-    n_residues = StringVar(master=group.interior())
+    Tkinter.Label(group.interior(), text='Repetitions').grid(row=3, column=0)
+    n_residues = Tkinter.StringVar(master=group.interior())
     n_residues.set(1)
-    entry_n_residues = Entry(
+    entry_n_residues = Tkinter.Entry(
         group.interior(),
         textvariable=n_residues,
         width=5)
     entry_n_residues.grid(row=3, column=1)
     # entry_n_residues.update()
     # Select position to insert ramification
-    Label(group.interior(), text='Position').grid(row=4, column=0)
-    first_res = StringVar(master=group.interior())
+    Tkinter.Label(group.interior(), text='Position').grid(row=4, column=0)
+    first_res = Tkinter.StringVar(master=group.interior())
     first_res.set(0)
-    entry_first_res = Entry(group.interior(), textvariable=first_res, width=5)
+    entry_first_res = Tkinter.Entry(group.interior(), textvariable=first_res, width=5)
     entry_first_res.grid(row=4, column=1)
     # entry_first_res.update()
     # Total number of residues, hidden
-    total_res = StringVar(master=group.interior())
+    total_res = Tkinter.StringVar(master=group.interior())
     total_res.set(0)
-    Label(group.interior(), text='New molecule').grid(row=5, column=0)
-    name = StringVar(master=group.interior())
+    Tkinter.Label(group.interior(), text='New molecule').grid(row=5, column=0)
+    name = Tkinter.StringVar(master=group.interior())
     name.set('carb')
-    mol_name = Entry(group.interior(), textvariable=name, width=5)
+    mol_name = Tkinter.Entry(group.interior(), textvariable=name, width=5)
     mol_name.grid(row=5, column=1)
     mol_name.update()
 
-    Button(
+    Tkinter.Button(
         p1,
         text="  add  ",
         command=lambda: add(
             mol_name.get())).pack(
-        side=LEFT)
-    Button(
+        side=Tkinter.LEFT)
+    Tkinter.Button(
         p1,
         text="create",
         command=lambda: create(
             mol_name.get())).pack(
-        side=LEFT)
-    Button(p1, text="reset", command=reset).pack(side=RIGHT)
+        side=Tkinter.LEFT)
+    Tkinter.Button(p1, text="reset", command=reset).pack(side=Tkinter.RIGHT)
     ############################ Visualization TAB ###########################
     group = Pmw.Group(p2, tag_text='options')
     group.pack(fill='both', expand=1, padx=5, pady=5)
 
     colors_list = ['auto', 'green', 'red', 'blue', 'yellow', 'cyan', 'magenta',
                    'orange', 'grey', 'black', 'white']
-    Label(group.interior(), text='Colors').grid(row=0, column=0)
-    colors = StringVar(master=group.interior())
+    Tkinter.Label(group.interior(), text='Colors').grid(row=0, column=0)
+    colors = Tkinter.StringVar(master=group.interior())
     colors.set(colors_list[0])
     Pmw.OptionMenu(group.interior(),
                    labelpos='w',
@@ -215,8 +215,8 @@ def mainDialog(root=None):
                    ).grid(row=0, column=1)
 
     rep_list = ['cartoon', 'wire', 'beads']
-    Label(group.interior(), text='Representations').grid(row=1, column=0)
-    rep = StringVar(master=group.interior())
+    Tkinter.Label(group.interior(), text='Representations').grid(row=1, column=0)
+    rep = Tkinter.StringVar(master=group.interior())
     rep.set(rep_list[0])
     Pmw.OptionMenu(group.interior(),
                    labelpos='w',
@@ -225,7 +225,7 @@ def mainDialog(root=None):
                    menubutton_width=12,
                    ).grid(row=1, column=1)
 
-    Button(p2, text="visualize", command=lambda: cartoonize(colors.get(),
+    Tkinter.Button(p2, text="visualize", command=lambda: cartoonize(colors.get(),
                                                             rep.get()
                                                             )).pack()
     ############################Calculations TAB##############################
@@ -233,8 +233,8 @@ def mainDialog(root=None):
     group.pack(fill='both', expand=1, padx=5, pady=5)
 
     # List available computations
-    Label(group.interior(), text=' Analysis ').grid(row=0, column=0)
-    type_analysis = StringVar(master=group.interior())
+    Tkinter.Label(group.interior(), text=' Analysis ').grid(row=0, column=0)
+    type_analysis = Tkinter.StringVar(master=group.interior())
     type_analysis.set('Rama scatter')
     Pmw.OptionMenu(group.interior(),
                    labelpos='w',
@@ -244,10 +244,10 @@ def mainDialog(root=None):
                    command=enable_disable_cutoff,
                    ).grid(row=0, column=1)
 
-    Label(group.interior(), text='Selection').grid(row=1, column=0)
-    sel0_value = StringVar(master=group.interior())
+    Tkinter.Label(group.interior(), text='Selection').grid(row=1, column=0)
+    sel0_value = Tkinter.StringVar(master=group.interior())
     sel0_value.set('all')
-    entry_sel0_value = Entry(
+    entry_sel0_value = Tkinter.Entry(
         group.interior(),
         textvariable=sel0_value,
         width=12)
@@ -259,47 +259,47 @@ def mainDialog(root=None):
             cmd.count_states(
                 sel0_value.get())))
 
-    Label(group.interior(), text='From state').grid(row=2, column=0)
-    from_state = IntVar(master=group.interior())
+    Tkinter.Label(group.interior(), text='From state').grid(row=2, column=0)
+    from_state = Tkinter.IntVar(master=group.interior())
     from_state.set(1)
-    entry_from_state = Entry(
+    entry_from_state = Tkinter.Entry(
         group.interior(),
         textvariable=from_state,
         width=12)
     entry_from_state.grid(row=2, column=1)
 
-    Label(group.interior(), text='To state').grid(row=3, column=0)
-    to_state = IntVar(master=group.interior())
+    Tkinter.Label(group.interior(), text='To state').grid(row=3, column=0)
+    to_state = Tkinter.IntVar(master=group.interior())
     to_state.set(cmd.count_states(sel0_value.get()))
-    entry_to_state = Entry(group.interior(), textvariable=to_state, width=12)
+    entry_to_state = Tkinter.Entry(group.interior(), textvariable=to_state, width=12)
     entry_to_state.grid(row=3, column=1)
 
-    Label(group.interior(), text='step').grid(row=4, column=0)
-    step = IntVar(master=group.interior())
+    Tkinter.Label(group.interior(), text='step').grid(row=4, column=0)
+    step = Tkinter.IntVar(master=group.interior())
     step.set(1)
-    entry_step = Entry(group.interior(), textvariable=step, width=12)
+    entry_step = Tkinter.Entry(group.interior(), textvariable=step, width=12)
     entry_step.grid(row=4, column=1)
 
-    Label(group.interior(), text='Cut off').grid(row=4, column=2)
-    cut_off = IntVar(master=group.interior())
+    Tkinter.Label(group.interior(), text='Cut off').grid(row=4, column=2)
+    cut_off = Tkinter.IntVar(master=group.interior())
     cut_off.set(0)
-    entry_cut_off = Entry(group.interior(), textvariable=cut_off, width=12)
+    entry_cut_off = Tkinter.Entry(group.interior(), textvariable=cut_off, width=12)
     entry_cut_off.grid(row=4, column=3)
     entry_cut_off.configure(state='disabled')
     entry_cut_off.update()
 
-    Label(group.interior(), text='Rg Visualization').grid(row=5, column=0)
-    vis_rg_value = BooleanVar(master=group.interior())
+    Tkinter.Label(group.interior(), text='Rg Visualization').grid(row=5, column=0)
+    vis_rg_value = Tkinter.BooleanVar(master=group.interior())
     vis_rg_value.set(False)
-    entry_rg = Checkbutton(
+    entry_rg = Tkinter.Checkbutton(
         group.interior(),
         variable=vis_rg_value,
         command=enable_disable_rg)
     entry_rg.grid(row=5, column=1)
     entry_rg.update()
-    by_state_value = BooleanVar(master=group.interior())
+    by_state_value = Tkinter.BooleanVar(master=group.interior())
     by_state_value.set(False)
-    entry_by_state = Checkbutton(
+    entry_by_state = Tkinter.Checkbutton(
         group.interior(),
         text='By state',
         variable=by_state_value)
@@ -307,7 +307,7 @@ def mainDialog(root=None):
     entry_by_state.configure(state='disabled')
     entry_by_state.update()
 
-    Button(
+    Tkinter.Button(
         p3, text="run analysis", command=lambda: analyse(
             type_analysis.get(), sel0_value.get(), int(
                 entry_from_state.get()), int(
@@ -318,35 +318,35 @@ def mainDialog(root=None):
     group = Pmw.Group(p4, tag_text='options')
     group.pack(fill='both', expand=1, padx=5, pady=5)
     # Selection
-    Label(group.interior(), text='Molecule').grid(row=0, column=0)
-    molecule = StringVar(master=group.interior())
+    Tkinter.Label(group.interior(), text='Molecule').grid(row=0, column=0)
+    molecule = Tkinter.StringVar(master=group.interior())
     molecule.set('carb')
-    entry_molecule = Entry(group.interior(), textvariable=molecule, width=5)
+    entry_molecule = Tkinter.Entry(group.interior(), textvariable=molecule, width=5)
     entry_molecule.grid(row=0, column=1)
     # Number of iteration
-    Label(group.interior(), text='Iterations').grid(row=1, column=0)
-    iterations = IntVar(master=group.interior())
+    Tkinter.Label(group.interior(), text='Iterations').grid(row=1, column=0)
+    iterations = Tkinter.IntVar(master=group.interior())
     iterations.set(10000)
-    entry_iterations = Entry(
+    entry_iterations = Tkinter.Entry(
         group.interior(),
         textvariable=iterations,
         width=5)
     entry_iterations.grid(row=1, column=1)
     # use solvent or not
-    Label(group.interior(), text='SASA').grid(row=2, column=0)
-    sasa = BooleanVar(master=group.interior())
+    Tkinter.Label(group.interior(), text='SASA').grid(row=2, column=0)
+    sasa = Tkinter.BooleanVar(master=group.interior())
     sasa.set(True)
-    entry_sasa = Checkbutton(group.interior(), variable=sasa)
+    entry_sasa = Tkinter.Checkbutton(group.interior(), variable=sasa)
     entry_sasa.grid(row=2, column=1)
     entry_sasa.configure(state='active')
     # randomize initial structure
-    Label(group.interior(), text='Randomize').grid(row=3, column=0)
-    randomize = BooleanVar(master=group.interior())
+    Tkinter.Label(group.interior(), text='Randomize').grid(row=3, column=0)
+    randomize = Tkinter.BooleanVar(master=group.interior())
     randomize.set(True)
-    entry_rnd = Checkbutton(group.interior(), variable=randomize)
+    entry_rnd = Tkinter.Checkbutton(group.interior(), variable=randomize)
     entry_rnd.grid(row=3, column=1)
     entry_rnd.configure(state='active')
-    Button(
+    Tkinter.Button(
         p4, text="run MCM", command=lambda: mcm_run(
             entry_molecule.get(), int(
                 entry_iterations.get()), bool(
@@ -363,16 +363,16 @@ For instructions on how to use this plugin, please
 read:
 http://www.pymolwiki.org/index.php/Azahar
 """
-    interior_frame = Frame(group.interior())
-    bar = Scrollbar(interior_frame)
-    text_holder = Text(
+    interior_frame = Tkinter.Frame(group.interior())
+    bar = Tkinter.Scrollbar(interior_frame)
+    text_holder = Tkinter.Text(
         interior_frame,
         yscrollcommand=bar.set,
         foreground="#cecece",
         background="#000000",
         font="Times 12")
     bar.config(command=text_holder.yview)
-    text_holder.insert(END, text)
-    text_holder.pack(side=LEFT, expand="yes", fill="both")
-    bar.pack(side=LEFT, expand="yes", fill="y")
+    text_holder.insert(Tkinter.END, text)
+    text_holder.pack(side=Tkinter.LEFT, expand="yes", fill="both")
+    bar.pack(side=Tkinter.LEFT, expand="yes", fill="y")
     interior_frame.pack(expand="yes", fill="both")
