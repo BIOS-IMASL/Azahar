@@ -39,7 +39,7 @@ def pose_from_pdb(pdb_file):
     Obtain residue indexes
     """
     stored.ResiduesNumber = []
-    cmd.iterate('name c1', 'stored.ResiduesNumber.append((resi))')
+    cmd.iterate('name C1', 'stored.ResiduesNumber.append((resi))')
     if stored.ResiduesNumber:
         first = int(stored.ResiduesNumber[0])
         last = first + len(stored.ResiduesNumber)
