@@ -1,11 +1,11 @@
 from __future__ import division
-import pymol
-from pymol import cmd
 import sys
 if sys.version_info[0] < 3:
     import tkMessageBox
 else:
     from tkinter import messagebox as tkMessageBox
+import pymol
+from pymol import cmd
 import numpy as np
 import threading
 import glob
@@ -18,21 +18,26 @@ from utils import pose_from_pdb, get_glyco_bonds, writer
 
 
 def mcm_run(pose, mc_steps, SASA, randomize):
-    try:
-        import openbabel as ob
-        t = threading.Thread(
-            target=mcm,
-            args=(
-                pose,
-                mc_steps,
-                SASA,
-                randomize))
-        t.daemon = True  # XXX
-        t.start()
-    except ImportError:
-        tkMessageBox.showerror('openbabel not found', 'To be able to run MCM,\
-        you need to have openbabel installed in your system. Read\
-        http://pymolwiki.org/index.php/Azahar for more information')
+    objects = cmd.get_object_list('(all)')
+    if pose in objects:
+        try:
+            import openbabel as ob
+            t = threading.Thread(target=mcm,
+                                 args=(pose,
+                                       mc_steps,
+                                       SASA,
+                                       randomize))
+            t.daemon = True  # XXX
+            t.start()
+        except ImportError:
+            tkMessageBox.showerror('openbabel not found',
+                                   'To be able to run MCM, you need to have'
+                                   'openbabel installed in your system. Read'
+                                   'http://pymolwiki.org/index.php/Azahar'
+                                   'for more information')
+    else:
+        tkMessageBox.showerror('Molecule not found',
+                               'The molecule you have selected does not exist')
 
 
 def sample_uniform(pose, con_matrix, angles_prob):
@@ -61,6 +66,7 @@ def mcm(pose, mc_steps, SASA, randomize):
     ################################# MCM Parameters ##########################
     T = 300.  # Temperature
     k = 0.0019872041  # Boltzmann constant
+    kT = k * T
     # probability to sample phi, psi or chi
     angles_prob = [1 / 3, 1 / 3, 1 / 3]
     accepted = 0
@@ -70,9 +76,11 @@ def mcm(pose, mc_steps, SASA, randomize):
     if first or last:
         print('Starting MCM')
         from energy import minimize, set_sasa, get_sasa
+        sus_updates = cmd.get('suspend_updates')
         cmd.set('suspend_updates', 'on')
         # uncomment for debugging
         cmd.feedback('disable', 'executive', 'everything')
+        pdb_conect = cmd.get('pdb_conect_all')
         cmd.set('pdb_conect_all', 1)
 
         glyco_bonds = get_glyco_bonds(first, last)
@@ -122,7 +130,7 @@ def mcm(pose, mc_steps, SASA, randomize):
                 cmd.save('mcm_%08d.pdb' % accepted)
                 accepted += 1
             else:
-                delta = np.exp(-(NRG_new - NRG_old) / (T * k))
+                delta = np.exp(-(NRG_new - NRG_old) / (kT))
                 if delta > np.random.uniform(0, 1):
                     NRG_old = NRG_new
                     fd.write('%8d%10.2f\n' % (accepted, NRG_new))
@@ -139,6 +147,7 @@ def mcm(pose, mc_steps, SASA, randomize):
 
         cmd.delete('all')
         print('Savings all accepted conformations on a single file')
+        de_builds = cmd.get('defer_builds_mode')
         cmd.set('defer_builds_mode', 5)
         for i in range(0, accepted):
             cmd.load('mcm_%08d.pdb' % i, 'mcm_trace')
@@ -146,5 +155,8 @@ def mcm(pose, mc_steps, SASA, randomize):
         cmd.delete('all')
         cmd.load('mcm_trace.pdb')
         cmd.intra_fit('mcm_trace')
-        print(' MCM completed')
-        cmd.set('suspend_updates', 'off')
+        print('MCM completed')
+        # restore settings
+        cmd.set('suspend_updates', sus_updates)
+        cmd.set('pdb_conect_all', pdb_conect)
+        cmd.set('defer_builds_mode', de_builds)
