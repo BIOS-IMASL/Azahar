@@ -8,18 +8,11 @@ import numpy as np
 from scipy.spatial.distance import cdist
 
 
-def minimize(
-        selection='tmp',
-        forcefield='MMFF94',
-        method='steepest descent',
-        nsteps=2000,
-        conv=1E-6,
-        cutoff=False,
-        cut_vdw=6.0,
-        cut_elec=8.0,
-        rigid_geometry=True):
+def minimize(selection='tmp', forcefield='MMFF94', method='steepest descent',
+             nsteps=2000, conv=1E-6, cutoff=False, cut_vdw=6.0, cut_elec=8.0,
+             rigid_geometry=True):
     """
-    Write Me!
+    Use openbabel to minimize the energy of a molecule.
     """
     pdb_string = cmd.get_pdbstr(selection)
     name = cmd.get_legal_name(selection)
@@ -125,32 +118,30 @@ def assign_params(atom_types):
     """
     Assign solvation parameters for each chemical group. See: DOI: 10.1002/prot.340140112
     """
-    SRA_model = {
-        'hydroxyl_carboxyl H': (
-            2.85, -0.0487), 'amine_amide H': (
-            2.85, -0.0487), 'thiol H': (
-                2.85, 0.0690), 'aliphatic CH3': (
-                    0.946, 0.0676), 'aliphatic CH2': (
-                        0.946, 0.0193), 'aliphatic CH': (
-                            0.946, 0.00438), 'aliphatic_alicyclic C': (
-                                0.946, 0.01691), 'alicyclic CH2': (
-                                    0.946, 0.0190), 'alicyclic CH': (
-                                        0.946, 0.0190), 'aromatic CH': (
-                                            0.946, -0.0110), 'aromatic C': (
-                                                0.946, -0.137), 'aromatic C of fused ring': (
-                                                    0.946, -0.103), 'aromatic CH of fused ring': (
-                                                        0.946, 0.2342), 'carbonyl_carboxylic C': (
-                                                            0.946, -0.104), 'N primary amine': (
-                                                                4.10, -0.0225), 'N secondary amine': (
-                                                                    4.10, -0.0213), 'N cyclic amine': (
-                                                                        4.10, -0.0254), 'aromatic N': (
-                                                                            4.10, -0.0234), 'N amide': (
-                                                                                4.10, -0.0337), 'ether_hydroxyl O': (
-                                                                                    2.83, -0.0282), 'carboxylic O': (
-                                                                                        2.83, 0.0394), 'carbonyl O': (
-                                                                                            2.83, -0.0489), 'amide carbonyl O': (
-                                                                                                2.83, -0.0920), 'thiol or sulfide S': (
-                                                                                                    7.37, -0.0020)}
+    SRA_model = {'hydroxyl_carboxyl H': (2.85, -0.0487), 
+                 'amine_amide H': (2.85, -0.0487),
+                 'thiol H': (2.85, 0.0690),
+                 'aliphatic CH3': (0.946, 0.0676),
+                 'aliphatic CH2': (0.946, 0.0193),
+                 'aliphatic CH': (0.946, 0.00438),
+                 'aliphatic_alicyclic C': (0.946, 0.01691),
+                 'alicyclic CH2': (0.946, 0.0190),
+                 'alicyclic CH': (0.946, 0.0190),
+                 'aromatic CH': (0.946, -0.0110),
+                 'aromatic C': (0.946, -0.137),
+                 'aromatic C of fused ring': (0.946, -0.103),
+                 'aromatic CH of fused ring': (0.946, 0.2342),
+                 'carbonyl_carboxylic C': (0.946, -0.104),
+                 'N primary amine': (4.10, -0.0225),
+                 'N secondary amine': (4.10, -0.0213),
+                 'N cyclic amine': (4.10, -0.0254),
+                 'aromatic N': (4.10, -0.0234),
+                 'N amide': (4.10, -0.0337),
+                 'ether_hydroxyl O': (2.83, -0.0282),
+                 'carboxylic O': (2.83, 0.0394),
+                 'carbonyl O': (2.83, -0.0489),
+                 'amide carbonyl O': (2.83, -0.0920),
+                 'thiol or sulfide S': (7.37, -0.0020)}
     params = {}
     for atom in atom_types:
         at_index, elem, heavy_nb, in_ring, is_arom, ring_membership, neighbors = atom
