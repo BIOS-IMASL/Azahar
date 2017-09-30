@@ -5,6 +5,8 @@ Radius of gyration
 Ramachandran plot
 """
 from __future__ import division
+import matplotlib
+matplotlib.use('TkAgg')
 import sys
 if sys.version_info[0] < 3:
     import tkMessageBox
@@ -100,7 +102,7 @@ def r_gyration(selection='all', from_state=1, to_state=1, step=1, visual=True,
             xyz = np.array(model.get_coord_list())
             center = np.average(xyz, 0)
             centers.append(center)
-            rg = np.sqrt(np.sum((xyz - center)**2) / len(xyz))
+            rg = np.mean(np.sum((xyz - center)**2, 1))** 0.5
             fd.write('%9d%8.2f\n' % (state, rg))
             radii.append(rg)
         try:

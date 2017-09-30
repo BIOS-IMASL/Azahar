@@ -31,9 +31,9 @@ def mcm_run(pose, mc_steps, SASA, randomize):
             t.start()
         except ImportError:
             tkMessageBox.showerror('openbabel not found',
-                                   'To be able to run MCM, you need to have'
-                                   'openbabel installed in your system. Read'
-                                   'http://pymolwiki.org/index.php/Azahar'
+                                   'To be able to run MCM, you need to have '
+                                   'openbabel installed in your system. Read '
+                                   'http://pymolwiki.org/index.php/Azahar '
                                    'for more information')
     else:
         tkMessageBox.showerror('Molecule not found',

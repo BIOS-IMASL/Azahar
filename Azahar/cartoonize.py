@@ -14,7 +14,7 @@ def find_rings(resn_list):
         stored.oxy = []
         # identify the oxygens that belong to the ring
         cmd.iterate(
-            'resi %s and name c1 extend 1 and (resi %s and name O* and not name O1*)' %
+            'resi %s and name C1 extend 1 and (resi %s and name O* and not name O1*)' %
             (resi, resi), 'stored.oxy.append(name)')
         ring.append(stored.oxy[0])
         for carbon in range(1, 10):
@@ -55,15 +55,15 @@ def get_bonds_coords(resn_list, matrix):
             stored.pos = []
             if bond[4] == '6':
                 cmd.iterate_state(
-                    state, 'resi %s and name c%s or resi %s and name c%s' %
+                    state, 'resi %s and name C%s or resi %s and name C%s' %
                     (bond[0], 5, bond[2], bond[5]), 'stored.pos.append((x,y,z))')
             elif bond[5] == '6':
                 cmd.iterate_state(
-                    state, 'resi %s and name c%s or resi %s and name c%s' %
+                    state, 'resi %s and name C%s or resi %s and name C%s' %
                     (bond[0], bond[4], bond[2], 5), 'stored.pos.append((x,y,z))')
             else:
                 cmd.iterate_state(
-                    state, 'resi %s and name c%s or resi %s and name c%s' %
+                    state, 'resi %s and name C%s or resi %s and name C%s' %
                     (bond[0], bond[4], bond[2], bond[5]), 'stored.pos.append((x,y,z))')
             x1, y1, z1 = stored.pos[0]
             x2, y2, z2 = stored.pos[1]
@@ -81,7 +81,7 @@ def get_colors_c1(resn_list, color):
             for i, resi in enumerate(resn_list):
                 stored.colors = []
                 cmd.iterate_state(
-                    state, 'resi %s and name c1' %
+                    state, 'resi %s and name C1' %
                     resi, 'stored.colors.append(color)')
                 colors.extend(stored.colors)
             matrix_colors.append(colors)
@@ -100,7 +100,7 @@ def get_bonds_colors(resn_list, matrix, color):
             for bond in matrix:
                 stored.colors = []
                 cmd.iterate_state(
-                    state, 'resi %s and name c1 or resi %s and name c1' %
+                    state, 'resi %s and name C1 or resi %s and name C1' %
                     (bond[0], bond[2]), 'stored.colors.append(color)')
                 colors.append((stored.colors[0], stored.colors[1]))
             matrix_colors.append(colors)
@@ -175,9 +175,9 @@ def cylinder(obj, coords, colors, radius):
 def cartoonize(color, rep):
     """draw a cartoon representation of glycans"""
     stored.ResiduesNumber = []
-    cmd.iterate('name c1', 'stored.ResiduesNumber.append((resi))')
+    cmd.iterate('name C1', 'stored.ResiduesNumber.append((resi))')
     resn_list = [int(i) for i in stored.ResiduesNumber]
-    bonds = get_glyco_bonds(resn_list[0], resn_list[-1] + 1)
+    bonds = get_glyco_bonds(resn_list[0], resn_list[-1] + 1 )
     con_matrix = writer(bonds)
     #con_matrix = writer2(bonds)
     rings = find_rings(resn_list)
