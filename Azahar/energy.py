@@ -4,8 +4,11 @@ Functions to compute and optimize the energy of molecules
 from __future__ import division
 from pymol import cmd
 import openbabel as ob
+from numba import jit
 import numpy as np
+from itertools import chain
 from scipy.spatial.distance import cdist
+from dictionaries import *
 
 
 def minimize(selection='tmp', forcefield='MMFF94', method='steepest descent',
@@ -271,3 +274,81 @@ def set_sasa(n=1000):
     params = assign_params(atom_types)
     points, const = generate_sphere_points(n)
     return params, points, const
+
+
+def LJ(neighbors, xyz, elements, mode='A'):
+    """
+    Lennard Jones energy term
+    .. math::
+    LJ_{ij} = \epsilon \left [ \left (\frac{\sigma_{ij}}{r_{ij}} \right)^{12}
+     - 2 \left (\frac{\sigma_{ij}}{r_{ij}} \right)^{6} \right]
+    \sigma_{ij} is the distance at which the potential reaches its minimum
+    \epsilon_{ij} is the depth of the potential well
+    r_{ij} is the distance between the particles
+    Parameters
+    ----------
+    XXX : XXX
+        XXX
+    XXX : XXX
+        XXX
+    Results
+    -------
+    E_LJ: float
+        Lennard Jones energy contribution
+    Notes
+    -----
+    A couple of details still missing
+    """
+
+    E_vdw = 0.
+    for i, j in neighbors:
+        print(i, j)
+        key_ij = elements[i] + elements[j]
+        # use par_vdw without precomputing values
+        #sigma_ij = par_vdw[key_i][0] + par_vdw[key_j][0]
+        #epsilon_ij = (par_vdw[key_i][1] * par_vdw[key_j][1])**0.5
+        # or use precomputed values
+        sigma_ij = par_s_ij[key_ij]
+        epsilon_ij = par_eps_ij[key_ij]
+
+        E_vdw += _LJ(xyz, i, j, sigma_ij, epsilon_ij)
+    return E_vdw
+
+
+def get_nb():
+    """
+    Computes the neighbors of each atom, that are at least 3 bonds appart.
+    
+    """
+    nb_vdw_list = []
+    model = cmd.get_model('all')
+    for at in model.atom:
+        nb = cmd.index('not (index %s extend 3)' % at.index)
+        nb_vdw_list.extend([tuple(sorted([at.index, i[1]])) for i in nb])
+    nb_vdw = list(set(tuple(nb_vdw_list)))
+    return nb_vdw
+
+@jit
+def _LJ(xyz, i, j, sigma_ij, epsilon_ij):
+
+    r_ij = dist(xyz[i], xyz[j])
+    C6 = (sigma_ij / r_ij) ** 6
+
+    return epsilon_ij * (C6 * C6 - 2 * C6)
+
+@jit
+def dist(p, q):
+    """
+    Compute distance between two 3D vectors
+    p: array
+        Cartesian coordinates for one of the vectors
+    q: array
+        Cartesian coordinates for one of the vectors
+    """
+    return ((p[0] - q[0])**2 + (p[1] - q[1])**2 + (p[2] - q[2])**2)**0.5
+
+def reset_index(alist):
+    flat_list = list(chain(*alist))
+    res_id = flat_list - np.ones_like(flat_list)
+    iterator = iter(res_id)
+    return zip(iterator, iterator)
