@@ -323,7 +323,7 @@ def get_nb():
     nb_vdw_list = []
     model = cmd.get_model('all')
     for at in model.atom:
-        nb = cmd.index('not (index %s extend 3)' % at.index)
+        nb = cmd.index('(not (index %s extend 2)) and (index %s around 6)' % (at.index, at.index))
         nb_vdw_list.extend([tuple(sorted([at.index, i[1]])) for i in nb])
     nb_vdw = list(set(tuple(nb_vdw_list)))
     return nb_vdw
