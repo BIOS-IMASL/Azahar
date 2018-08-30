@@ -314,19 +314,6 @@ def LJ(neighbors, xyz, elements, mode='A'):
     return E_vdw
 
 
-def get_nb():
-    """
-    Computes the neighbors of each atom, that are at least 3 bonds appart.
-    
-    """
-    nb_vdw_list = []
-    model = cmd.get_model('all')
-    for at in model.atom:
-        nb = cmd.index('(not (index %s extend 2)) and (index %s around 6)' % (at.index, at.index))
-        nb_vdw_list.extend([tuple(sorted([at.index, i[1]])) for i in nb])
-    nb_vdw = list(set(tuple(nb_vdw_list)))
-    return nb_vdw
-
 @jit
 def _LJ(xyz, i, j, sigma_ij, epsilon_ij):
 
@@ -346,11 +333,6 @@ def dist(p, q):
     """
     return ((p[0] - q[0])**2 + (p[1] - q[1])**2 + (p[2] - q[2])**2)**0.5
 
-#def reset_index(alist):
-#    flat_list = [i for tup in alist for i in tup]
-#    res_id = flat_list - np.ones_like(flat_list)
-#    iterator = iter(res_id)
-#    return zip(iterator, iterator)
 
 def reset_index(alist):
     lot = []
