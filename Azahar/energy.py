@@ -6,10 +6,10 @@ from pymol import cmd
 import openbabel as ob
 from numba import jit
 import numpy as np
-from itertools import chain
 from scipy.spatial.distance import cdist
 from dictionaries import *
-
+from scipy.spatial import cKDTree
+from pymol import cmd
 
 def minimize(selection='tmp', forcefield='MMFF94', method='steepest descent',
              nsteps=2000, conv=1E-6, cutoff=False, cut_vdw=6.0, cut_elec=8.0,
@@ -302,7 +302,6 @@ def LJ(neighbors, xyz, elements, mode='A'):
 
     E_vdw = 0.
     for i, j in neighbors:
-        print(i, j)
         key_ij = elements[i] + elements[j]
         # use par_vdw without precomputing values
         #sigma_ij = par_vdw[key_i][0] + par_vdw[key_j][0]
@@ -347,8 +346,55 @@ def dist(p, q):
     """
     return ((p[0] - q[0])**2 + (p[1] - q[1])**2 + (p[2] - q[2])**2)**0.5
 
+#def reset_index(alist):
+#    flat_list = [i for tup in alist for i in tup]
+#    res_id = flat_list - np.ones_like(flat_list)
+#    iterator = iter(res_id)
+#    return zip(iterator, iterator)
+
 def reset_index(alist):
-    flat_list = list(chain(*alist))
+    lot = []
+    flat_list = [i for tup in alist for i in tup]
     res_id = flat_list - np.ones_like(flat_list)
-    iterator = iter(res_id)
-    return zip(iterator, iterator)
+    for i in range(len(res_id)):
+        try:
+            lot.append((res_id[0:][i], res_id[1:][i]))
+        except:
+            pass
+    return lot[::2]
+    
+
+def get_exclusions():
+    """
+    Computes the 1_3 exclusions
+    """
+    nb_vdw_list = []
+    model = cmd.get_model('all')
+    for at in model.atom:
+        nb = cmd.index('(index %s extend 2)' % at.index)
+        nb_vdw_list.extend([tuple(sorted([at.index-1, i[1]-1])) for i in nb])
+    nb_vdw = set(nb_vdw_list)
+    return nb_vdw
+
+
+def compute_neighbors(coords, exclusions, cut_off):
+    """
+    Use a KD-tree (from scipy) to compute the neighbors atoms for each atom.
+    Parameters
+    ----------
+    coords : array (m, 3)
+        Cartesian coordinates of a molecule
+    exclusions : set of tuples
+        Pairs of atoms excluded from the computation of the neighbors
+    cut_off : float
+        Only pairs of atoms closer than cut_off will be used to compute the
+        neighbors.
+    Results
+    -------
+    neighbors: set of tuples
+        Pairs of neighbors atoms within a given "cut_off" and excluding
+        "exclusions"
+    """
+    tree_c = cKDTree(coords)
+    all_pairs = tree_c.query_pairs(cut_off)
+    return all_pairs - exclusions
