@@ -12,11 +12,9 @@ Version 0.8
 import sys
 if sys.version_info[0] < 3:
     import Tkinter
-    import tkMessageBox
 else:
     import tkinter as Tkinter
-    from tkinter import messagebox as tkMessageBox
-
+    
 import Pmw
 from pymol import cmd
 import os
@@ -82,7 +80,7 @@ def mainDialog(root=None):
             cmd.zoom()
             cmd.util.chainbow(mol_name)
         else:
-            tkMessageBox.showerror("FileNotFound", "You should add residues\
+            print("FileNotFound", "You should add residues\
             before creating a molecule.")
 
     def reset():

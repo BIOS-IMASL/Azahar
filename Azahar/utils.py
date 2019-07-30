@@ -5,21 +5,20 @@ Radius of gyration
 Ramachandran plot
 """
 from __future__ import division
+from __future__ import division
 try:
     import matplotlib
     matplotlib.use('TkAgg')
     import matplotlib.pyplot as plt
 except ImportError:
-    tkMessageBox.showerror('matplotlib not found')
+    print('matplotlib not found')
 import sys
-if sys.version_info[0] < 3:
-    import tkMessageBox
-else:
-    from tkinter import messagebox as tkMessageBox
+import Tkinter
 from pymol.cgo import *
 import pymol
 from pymol import cmd, stored
 import numpy as np
+#import matplotlib.pyplot as plt
 import os
 path = os.path.dirname(__file__)
 sys.path.append(path)
@@ -50,7 +49,7 @@ def pose_from_pdb(pdb_file):
         last = first + len(stored.ResiduesNumber)
         return first, last
     else:
-        tkMessageBox.showerror("GlycanNotFound", "There is no glycan molecule \
+        print("GlycanNotFound", "There is no glycan molecule \
 or the atoms in your molecule have a non-standard nomenclature")
         return None, None
 

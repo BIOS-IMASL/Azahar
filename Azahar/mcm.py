@@ -1,9 +1,6 @@
 from __future__ import division
 import sys
-if sys.version_info[0] < 3:
-    import tkMessageBox
-else:
-    from tkinter import messagebox as tkMessageBox
+import Tkinter
 import pymol
 from pymol import cmd
 import numpy as np
@@ -30,13 +27,13 @@ def mcm_run(pose, mc_steps, SASA, randomize):
             t.daemon = True  # XXX
             t.start()
         except ImportError:
-            tkMessageBox.showerror('openbabel not found',
+            print('openbabel not found',
                                    'To be able to run MCM, you need to have '
                                    'openbabel installed in your system. Read '
                                    'http://pymolwiki.org/index.php/Azahar '
                                    'for more information')
     else:
-        tkMessageBox.showerror('Molecule not found',
+        print('Molecule not found',
                                'The molecule you have selected does not exist')
 
 
