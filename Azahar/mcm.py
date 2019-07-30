@@ -1,6 +1,9 @@
 from __future__ import division
 import sys
-import Tkinter
+if sys.version_info[0] < 3:
+    import Tkinter
+else:
+    import tkinter as Tkinter
 import pymol
 from pymol import cmd
 import numpy as np

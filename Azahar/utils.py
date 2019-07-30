@@ -5,7 +5,6 @@ Radius of gyration
 Ramachandran plot
 """
 from __future__ import division
-from __future__ import division
 try:
     import matplotlib
     matplotlib.use('TkAgg')
@@ -13,12 +12,14 @@ try:
 except ImportError:
     print('matplotlib not found')
 import sys
-import Tkinter
+if sys.version_info[0] < 3:
+    import Tkinter
+else:
+    import tkinter as Tkinter
 from pymol.cgo import *
 import pymol
 from pymol import cmd, stored
 import numpy as np
-#import matplotlib.pyplot as plt
 import os
 path = os.path.dirname(__file__)
 sys.path.append(path)
