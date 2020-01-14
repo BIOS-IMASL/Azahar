@@ -227,10 +227,20 @@ def mainDialog(root=None):
                    menubutton_width=12,
                    ).grid(row=1, column=1)
 
+    Tkinter.Label(group.interior(), text='Chain').grid(row=2, column=0)
+    chain = Tkinter.StringVar(master=group.interior())
+    chain.set("A")
+    entry_chain = Tkinter.Entry(group.interior(),
+                                  textvariable=chain,
+                                  width=12)
+    entry_chain.grid(row=2, column=1)
+    entry_chain.configure(state='normal')
+    entry_chain.update()
     Tkinter.Button(p2,
                    text="visualize",
                    command=lambda: cartoonize(colors.get(),
-                                              rep.get())
+                                              rep.get(),
+                                              chain.get())
                    ).pack()
     ############################Calculations TAB##############################
     group = Pmw.Group(p3, tag_text='options')

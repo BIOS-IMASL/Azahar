@@ -6,11 +6,11 @@ import numpy as np
 from utils import get_glyco_bonds, writer
 
 
-def find_rings(resn_list):
+def find_rings(resn_list, chain):
     """determine wich atoms define the sugar rings"""
     matrix_rings = []
     for resi in resn_list:
-        print(resi)
+        print(resi, chain)
         ring = []
         stored.oxy = []
         # identify the oxygens that belong to the ring
@@ -20,12 +20,12 @@ def find_rings(resn_list):
         ring.append(stored.oxy[0])
         for carbon in range(1, 10):
             if cmd.select(
-                'tmp', 'not hydrogen and (neighbor (resi %s and name c%s))' %
-                    (resi, carbon)) > 2:
+                'tmp', 'not hydrogen and (neighbor (resi %s and name c%s and chain %s))' %
+                    (resi, carbon, chain)) > 2:
                 ring.append('C%s' % carbon)
         while True:
-            if cmd.select('tmp', 'resi %s and name %s extend 1 and name %s' % (
-                    resi, ring[0], ring[-1])) == 0:
+            if cmd.select('tmp', 'resi %s and name %s and chain %s extend 1 and name %s' % (
+                    resi, ring[0], chain, ring[-1])) == 0:
                 ring.pop()
             else:
                 break
@@ -33,21 +33,21 @@ def find_rings(resn_list):
     return matrix_rings
 
 
-def get_ring_coords(resn_list, matrix):
+def get_ring_coords(resn_list, matrix, chain):
     """obtain coordinates of sugar rings"""
     matrix_coords = []
     for state in range(1, cmd.count_states() + 1):
         coords = []
         for i, resi in enumerate(resn_list):
             stored.coords = []
-            cmd.iterate_state(state, 'resi %s and name %s' % (
-                resi, '+'.join(matrix[i])), 'stored.coords.append([x,y,z])')
+            cmd.iterate_state(state, 'resi %s and chain %s, and name %s' % (
+                resi, chain, '+'.join(matrix[i])), 'stored.coords.append([x,y,z])')
             coords.append(stored.coords)
         matrix_coords.append(coords)
     return matrix_coords
 
 
-def get_bonds_coords(resn_list, matrix):
+def get_bonds_coords(resn_list, matrix, chain):
     """obtain coordinates of the atoms in the glycosidic bond"""
     matrix_coords = []
     for state in range(1, cmd.count_states() + 1):
@@ -56,16 +56,16 @@ def get_bonds_coords(resn_list, matrix):
             stored.pos = []
             if bond[4] == '6':
                 cmd.iterate_state(
-                    state, 'resi %s and name C%s or resi %s and name C%s' %
-                    (bond[0], 5, bond[2], bond[5]), 'stored.pos.append((x,y,z))')
+                    state, 'resi %s and chain %s and name C%s or resi %s and name C%s' %
+                    (bond[0], chain, 5, bond[2], bond[5]), 'stored.pos.append((x,y,z))')
             elif bond[5] == '6':
                 cmd.iterate_state(
-                    state, 'resi %s and name C%s or resi %s and name C%s' %
-                    (bond[0], bond[4], bond[2], 5), 'stored.pos.append((x,y,z))')
+                    state, 'resi %s and chain %s and name C%s or resi %s and name C%s' %
+                    (bond[0], chain, bond[4], bond[2], 5), 'stored.pos.append((x,y,z))')
             else:
                 cmd.iterate_state(
-                    state, 'resi %s and name C%s or resi %s and name C%s' %
-                    (bond[0], bond[4], bond[2], bond[5]), 'stored.pos.append((x,y,z))')
+                    state, 'resi %s and chain %s and name C%s or resi %s and name C%s' %
+                    (bond[0], chain, bond[4], bond[2], bond[5]), 'stored.pos.append((x,y,z))')
             x1, y1, z1 = stored.pos[0]
             x2, y2, z2 = stored.pos[1]
             coords.append((x1, y1, z1, x2, y2, z2))
@@ -73,7 +73,7 @@ def get_bonds_coords(resn_list, matrix):
     return matrix_coords
 
 
-def get_colors_c1(resn_list, color):
+def get_colors_c1(resn_list, color, chain):
     """obtain colors of c1 atoms"""
     matrix_colors = []
     if color == 'auto':
@@ -82,8 +82,8 @@ def get_colors_c1(resn_list, color):
             for i, resi in enumerate(resn_list):
                 stored.colors = []
                 cmd.iterate_state(
-                    state, 'resi %s and name C1' %
-                    resi, 'stored.colors.append(color)')
+                    state, 'resi %s and chain %s and name C1' %
+                           (resi, chain), 'stored.colors.append(color)')
                 colors.extend(stored.colors)
             matrix_colors.append(colors)
     else:
@@ -92,7 +92,7 @@ def get_colors_c1(resn_list, color):
     return matrix_colors
 
 
-def get_bonds_colors(resn_list, matrix, color):
+def get_bonds_colors(resn_list, matrix, color, chain):
     """obtain colors for the bonds"""
     matrix_colors = []
     if color == 'auto':
@@ -101,8 +101,8 @@ def get_bonds_colors(resn_list, matrix, color):
             for bond in matrix:
                 stored.colors = []
                 cmd.iterate_state(
-                    state, 'resi %s and name C1 or resi %s and name C1' %
-                    (bond[0], bond[2]), 'stored.colors.append(color)')
+                    state, 'resi %s and chain %s and name C1 or resi %s and chain %s and name C1' %
+                    (bond[0], chain, bond[2], chain), 'stored.colors.append(color)')
                 colors.append((stored.colors[0], stored.colors[1]))
             matrix_colors.append(colors)
     else:
@@ -176,16 +176,16 @@ def cylinder(obj, coords, colors, radius):
 def cartoonize(color, rep, chain):
     """draw a cartoon representation of glycans"""
     stored.ResiduesNumber = []
-    cmd.iterate('name C1', 'stored.ResiduesNumber.append((resi))')
+    cmd.iterate('name C1 and chain '+chain, 'stored.ResiduesNumber.append((resi))')
     resn_list = [int(i) for i in stored.ResiduesNumber]
     bonds = get_glyco_bonds(resn_list[0], resn_list[-1] + 1 )
     con_matrix = writer(bonds)
     #con_matrix = writer2(bonds)
-    rings = find_rings(resn_list)
-    rings_coords = get_ring_coords(resn_list, rings)
-    bonds_coords = get_bonds_coords(resn_list, con_matrix)
-    colors = get_colors_c1(resn_list, color)
-    bonds_colors = get_bonds_colors(resn_list, con_matrix, color)
+    rings = find_rings(resn_list, chain)
+    rings_coords = get_ring_coords(resn_list, rings, chain)
+    bonds_coords = get_bonds_coords(resn_list, con_matrix, chain)
+    colors = get_colors_c1(resn_list, color, chain)
+    bonds_colors = get_bonds_colors(resn_list, con_matrix, color, chain)
     cmd.set('suspend_updates', 'on')
     for state, coords in enumerate(rings_coords):
         obj = []
