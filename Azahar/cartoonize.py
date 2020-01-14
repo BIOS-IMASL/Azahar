@@ -3,7 +3,8 @@ import pymol
 from pymol import cmd, stored
 from pymol.cgo import *
 import numpy as np
-from utils import get_glyco_bonds, writer
+import time
+from utils import get_glyco_bonds_within_chain_and_model, writer
 
 
 def find_rings(resn_list, chain):
@@ -56,16 +57,16 @@ def get_bonds_coords(resn_list, matrix, chain):
             stored.pos = []
             if bond[4] == '6':
                 cmd.iterate_state(
-                    state, 'resi %s and chain %s and name C%s or resi %s and name C%s' %
-                    (bond[0], chain, 5, bond[2], bond[5]), 'stored.pos.append((x,y,z))')
+                    state, 'resi %s and chain %s and name C%s or resi %s and name C%s and chain %s' %
+                    (bond[0], chain, 5, bond[2], bond[5], chain), 'stored.pos.append((x,y,z))')
             elif bond[5] == '6':
                 cmd.iterate_state(
-                    state, 'resi %s and chain %s and name C%s or resi %s and name C%s' %
-                    (bond[0], chain, bond[4], bond[2], 5), 'stored.pos.append((x,y,z))')
+                    state, 'resi %s and chain %s and name C%s or resi %s and name C%s and chain %s' %
+                    (bond[0], chain, bond[4], bond[2], 5, chain), 'stored.pos.append((x,y,z))')
             else:
                 cmd.iterate_state(
-                    state, 'resi %s and chain %s and name C%s or resi %s and name C%s' %
-                    (bond[0], chain, bond[4], bond[2], bond[5]), 'stored.pos.append((x,y,z))')
+                    state, 'resi %s and chain %s and name C%s or resi %s and name C%s and chain %s' %
+                    (bond[0], chain, bond[4], bond[2], bond[5], chain), 'stored.pos.append((x,y,z))')
             x1, y1, z1 = stored.pos[0]
             x2, y2, z2 = stored.pos[1]
             coords.append((x1, y1, z1, x2, y2, z2))
@@ -172,45 +173,78 @@ def cylinder(obj, coords, colors, radius):
                     radius, r1, g1, b1, r2, g2, b2])
     return obj
 
+def cartoonize(color, rep, chains, show_bonds=False):
+    stored.all_models = []
+    cmd.iterate('(all)', 'stored.all_models.append((model))')
+    for model in set(stored.all_models):
+        print(model)
+        for chain in chains:
+            print("cartoonizing ",model,chain)
+            cartoonize_model_and_chain(color, rep, chain, model, show_bonds)
 
-def cartoonize(color, rep, chain):
+def elapsed(starting, s):
+    e = time.time() - starting
+    print(s, e)
+    return e
+
+def cartoonize_model_and_chain(color, rep, chain, model, show_bonds=False):
     """draw a cartoon representation of glycans"""
+    start = time.time()
     stored.ResiduesNumber = []
-    cmd.iterate('name C1 and chain '+chain, 'stored.ResiduesNumber.append((resi))')
+    cmd.iterate('name C1 and chain '+chain+' and model '+model, 'stored.ResiduesNumber.append((resi))')
+
     resn_list = [int(i) for i in stored.ResiduesNumber]
-    bonds = get_glyco_bonds(resn_list[0], resn_list[-1] + 1 )
-    con_matrix = writer(bonds)
+
     #con_matrix = writer2(bonds)
     rings = find_rings(resn_list, chain)
     rings_coords = get_ring_coords(resn_list, rings, chain)
-    bonds_coords = get_bonds_coords(resn_list, con_matrix, chain)
     colors = get_colors_c1(resn_list, color, chain)
-    bonds_colors = get_bonds_colors(resn_list, con_matrix, color, chain)
+
     cmd.set('suspend_updates', 'on')
-    for state, coords in enumerate(rings_coords):
-        obj = []
-        if rep == 'beads':
-            radius_s = 1.8
-            radius_b = 0.18
-            obj = beads(obj, coords, colors[state], radius_s)
-            obj = cylinder(
-                obj,
-                bonds_coords[state],
-                bonds_colors[state],
-                radius_b)
-        else:
-            if rep == 'cartoon':
-                radius = 0.075
-            else:
-                radius = 0.035
-            obj = hexagon(obj, coords, colors[state], rep, radius)
+    create_start = time.time()
+
+    obj = []
+
+    #Set the radius
+    if rep == 'beads':
+        radius = 0.18
+    elif rep == "cartoon":
+        radius = 0.075
+    else:
+        radius = 0.035
+
+    #Show bonds is currently the slowest step.
+    ## It doesn't work well with branching (1-6 is too short)
+    ## It doesn't work with Glycan-protein connections.
+    obj = []
+    if show_bonds:
+        elapsed(start, "end hex")
+        bonds = get_glyco_bonds_within_chain_and_model(resn_list[0], resn_list[-1] + 1, chain, model)
+        elapsed(start, "glyco_bonds")
+        con_matrix = writer(bonds)
+
+        bonds_colors = get_bonds_colors(resn_list, con_matrix, color, chain)
+        bonds_coords = get_bonds_coords(resn_list, con_matrix, chain)
+
+        for state, coords in enumerate(rings_coords):
+
             obj = cylinder(
                 obj,
                 bonds_coords[state],
                 bonds_colors[state],
                 radius)
-        cmd.load_cgo(obj, 'cgo01', state + 1)
+            cmd.load_cgo(obj, 'cgb01' + chain, state + 1)
 
+    for state, coords in enumerate(rings_coords):
+
+        if rep == 'beads':
+            obj = beads(obj, coords, colors[state], 1.8)
+        else:
+            obj = hexagon(obj, coords, colors[state], rep, radius)
+        cmd.load_cgo(obj, 'cgo01'+chain, state + 1)
+
+
+    elapsed(create_start, "Draw")
     cmd.select('glycan', 'byres name C1')
     cmd.delete('glycan')
     cmd.delete('tmp')

@@ -16,7 +16,7 @@ else:
     import tkinter as Tkinter
     
 import Pmw
-from pymol import cmd
+from pymol import cmd, stored
 import os
 import numpy as np
 path = os.path.dirname(__file__)
@@ -227,20 +227,36 @@ def mainDialog(root=None):
                    menubutton_width=12,
                    ).grid(row=1, column=1)
 
-    Tkinter.Label(group.interior(), text='Chain').grid(row=2, column=0)
-    chain = Tkinter.StringVar(master=group.interior())
-    chain.set("A")
+    Tkinter.Label(group.interior(), text='Chains').grid(row=2, column=0)
+    chains = Tkinter.StringVar(master=group.interior())
+    stored.iterchains = []
+    cmd.iterate('(all)', 'stored.iterchains.append((chain))')
+    all_chains = "".join(set(stored.iterchains))
+    print(all_chains)
+    chains.set(all_chains)
     entry_chain = Tkinter.Entry(group.interior(),
-                                  textvariable=chain,
+                                  textvariable=chains,
                                   width=12)
     entry_chain.grid(row=2, column=1)
     entry_chain.configure(state='normal')
     entry_chain.update()
+
+    Tkinter.Label(group.interior(), text='Draw Bonds').grid(row=3, column=0)
+    bond_val = Tkinter.BooleanVar(master=group.interior())
+    bond_val.set(False)
+    check_bond = Tkinter.Checkbutton(
+        group.interior(),
+        variable=bond_val)
+    check_bond.grid(row=3, column=1)
+    check_bond.configure(state='normal')
+    check_bond.update()
+
     Tkinter.Button(p2,
                    text="visualize",
                    command=lambda: cartoonize(colors.get(),
                                               rep.get(),
-                                              chain.get())
+                                              chains.get(),
+                                              bond_val.get())
                    ).pack()
     ############################Calculations TAB##############################
     group = Pmw.Group(p3, tag_text='options')
