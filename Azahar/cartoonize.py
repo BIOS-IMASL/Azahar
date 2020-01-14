@@ -10,6 +10,7 @@ def find_rings(resn_list):
     """determine wich atoms define the sugar rings"""
     matrix_rings = []
     for resi in resn_list:
+        print(resi)
         ring = []
         stored.oxy = []
         # identify the oxygens that belong to the ring
@@ -172,7 +173,7 @@ def cylinder(obj, coords, colors, radius):
     return obj
 
 
-def cartoonize(color, rep):
+def cartoonize(color, rep, chain):
     """draw a cartoon representation of glycans"""
     stored.ResiduesNumber = []
     cmd.iterate('name C1', 'stored.ResiduesNumber.append((resi))')
