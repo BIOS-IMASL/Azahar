@@ -227,36 +227,53 @@ def mainDialog(root=None):
                    menubutton_width=12,
                    ).grid(row=1, column=1)
 
-    Tkinter.Label(group.interior(), text='Chains').grid(row=2, column=0)
+    stored.all_models = []
+    cmd.iterate('(all)', 'stored.all_models.append((model))')
+
+    models = ["all"]
+    models.extend(np.unique(stored.all_models))
+    Tkinter.Label(group.interior(), text='Models').grid(row=2, column=0)
+    model = Tkinter.StringVar(master=group.interior())
+    model.set("all")
+    Pmw.OptionMenu(group.interior(),
+                   labelpos='w',
+                   menubutton_textvariable=model,
+                   items=models,
+                   menubutton_width=12,
+                   ).grid(row=2, column=1)
+
+
+    Tkinter.Label(group.interior(), text='Chains').grid(row=3, column=0)
     chains = Tkinter.StringVar(master=group.interior())
     stored.iterchains = []
     cmd.iterate('(all)', 'stored.iterchains.append((chain))')
     all_chains = "".join(set(stored.iterchains))
-    print(all_chains)
     chains.set(all_chains)
     entry_chain = Tkinter.Entry(group.interior(),
                                   textvariable=chains,
                                   width=12)
-    entry_chain.grid(row=2, column=1)
+    entry_chain.grid(row=3, column=1)
     entry_chain.configure(state='normal')
     entry_chain.update()
 
-    Tkinter.Label(group.interior(), text='Draw Bonds').grid(row=3, column=0)
+    Tkinter.Label(group.interior(), text='Draw Bonds?').grid(row=4, column=0)
     bond_val = Tkinter.BooleanVar(master=group.interior())
     bond_val.set(False)
     check_bond = Tkinter.Checkbutton(
         group.interior(),
         variable=bond_val)
-    check_bond.grid(row=3, column=1)
+    check_bond.grid(row=4, column=1)
     check_bond.configure(state='normal')
     check_bond.update()
 
     Tkinter.Button(p2,
                    text="visualize",
-                   command=lambda: cartoonize(colors.get(),
-                                              rep.get(),
+                   command=lambda: cartoonize(
                                               chains.get(),
-                                              bond_val.get())
+                                              colors.get(),
+                                              rep.get(),
+                                              bond_val.get(),
+                                              model.get())
                    ).pack()
     ############################Calculations TAB##############################
     group = Pmw.Group(p3, tag_text='options')

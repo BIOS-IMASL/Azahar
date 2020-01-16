@@ -14,22 +14,20 @@ def elapsed(starting, s):
 def find_rings(resn_list, chain, model):
     """determine wich atoms define the sugar rings"""
     matrix_rings = []
+    start = time.time()
     for resi in resn_list:
         ring = []
-        stored.oxy = []
         # identify the oxygens that belong to the ring
-        cmd.iterate(
-            'resi %s and model %s and name C1 extend 1 and (resi %s and name O* and not name O1*)' %
-            (resi, model, resi), 'stored.oxy.append(name)')
-        ring.append(stored.oxy[0])
+        o_atm = cmd.get_model(f'model {model} and chain {chain} and resi {resi} and name C1 extend 1 and (resi {resi} and name O* and not name O1*)')
+        ring.append(o_atm.atom[0].name)
         for carbon in range(1, 10):
             if cmd.select(
-                'tmp', 'not hydrogen and (neighbor (resi %s and name c%s and chain %s and model %s))' %
-                    (resi, carbon, chain, model)) > 2:
+                'tmp', 'not hydrogen and (neighbor (model %s and chain %s and resi %s and name c%s ))' %
+                    (model, chain, resi, carbon)) > 2:
                 ring.append('C%s' % carbon)
         while True:
-            if cmd.select('tmp', 'resi %s and name %s and chain %s and model %s extend 1 and name %s' % (
-                    resi, ring[0], chain, model, ring[-1])) == 0:
+            if cmd.select('tmp', 'model %s and chain %s and resi %s and name %s extend 1 and name %s' % (
+                    model, chain, resi, ring[0], ring[-1])) == 0:
                 ring.pop()
             else:
                 break
@@ -44,8 +42,8 @@ def get_ring_coords(resn_list, matrix, chain, model):
         coords = []
         for i, resi in enumerate(resn_list):
             stored.coords = []
-            cmd.iterate_state(state, 'resi %s and chain %s and model %s and name %s' % (
-                resi, chain, model, '+'.join(matrix[i])), 'stored.coords.append([x,y,z])')
+            cmd.iterate_state(state, 'model %s and chain %s and resi %s and name %s' % (
+                model, chain, resi,  '+'.join(matrix[i])), 'stored.coords.append([x,y,z])')
             coords.append(stored.coords)
         matrix_coords.append(coords)
     return matrix_coords
@@ -58,18 +56,22 @@ def get_bonds_coords(resn_list, matrix, chain, model):
         coords = []
         for bond in matrix:
             stored.pos = []
-            if bond[4] == '6':
+            #Ex bond:
+            # (3101, 'NAG', 3100, 'NAG', 1, 4)
+            # (475, 'MAN', 471, 'MAN', 1, 6) Exocyclic
+            if bond[4] == 6:
                 cmd.iterate_state(
-                    state, 'resi %s and chain %s and model %s and name C%s or resi %s and name C%s and chain %s and model %s' %
-                    (bond[0], chain, model, 5, bond[2], bond[5], chain, model), 'stored.pos.append((x,y,z))')
-            elif bond[5] == '6':
+                    state, 'model %s and chain %s and resi %s and name C%s or model %s and chain %s and resi %s and name C%s' %
+                    (model, chain, bond[0], 5, model, chain, bond[2], bond[5]), 'stored.pos.append((x,y,z))')
+            elif bond[5] == 6:
+                print("Exocyclic", bond)
                 cmd.iterate_state(
-                    state, 'resi %s and chain %s and model %s and name C%s or resi %s and name C%s and chain %s and model %s' %
-                    (bond[0], chain, model, bond[4], bond[2], 5, chain, model), 'stored.pos.append((x,y,z))')
+                    state, 'model %s and chain %s and resi %s and name C%s or model %s and chain %s and resi %s and name C%s' %
+                    (model, chain, bond[0], bond[4], model, chain, bond[2], 5), 'stored.pos.append((x,y,z))')
             else:
                 cmd.iterate_state(
-                    state, 'resi %s and chain %s and model %s and name C%s or resi %s and name C%s and chain %s and model %s' %
-                    (bond[0], chain, model, bond[4], bond[2], bond[5], chain, model), 'stored.pos.append((x,y,z))')
+                    state, 'model %s and chain %s and resi %s and name C%s or model %s and chain %s and resi %s and name C%s' %
+                    (model, chain, bond[0], bond[4], model, chain, bond[2], bond[5]), 'stored.pos.append((x,y,z))')
             x1, y1, z1 = stored.pos[0]
             x2, y2, z2 = stored.pos[1]
             coords.append((x1, y1, z1, x2, y2, z2))
@@ -86,8 +88,8 @@ def get_colors_c1(resn_list, color, chain, model):
             for i, resi in enumerate(resn_list):
                 stored.colors = []
                 cmd.iterate_state(
-                    state, 'resi %s and chain %s and model %s and name C1' %
-                           (resi, chain, model), 'stored.colors.append(color)')
+                    state, 'model %s and chain %s and resi %s and name C1' %
+                           (model, chain, resi), 'stored.colors.append(color)')
                 colors.extend(stored.colors)
             matrix_colors.append(colors)
     else:
@@ -105,8 +107,8 @@ def get_bonds_colors(resn_list, matrix, color, chain, model):
             for bond in matrix:
                 stored.colors = []
                 cmd.iterate_state(
-                    state, 'resi %s and chain %s and model %s and name C1 or resi %s and chain %s and model %s and name C1' %
-                    (bond[0], chain, model, bond[2], chain, model), 'stored.colors.append(color)')
+                    state, 'model %s and chain %s and resi %s and name C1 or model %s and chain %s and resi %s  and name C1' %
+                    (model, chain, bond[0], model, chain, bond[2]), 'stored.colors.append(color)')
                 colors.append((stored.colors[0], stored.colors[1]))
             matrix_colors.append(colors)
     else:
@@ -176,22 +178,47 @@ def cylinder(obj, coords, colors, radius):
                     radius, r1, g1, b1, r2, g2, b2])
     return obj
 
-def cartoonize(color, rep, chains, show_bonds=False):
-    stored.all_models = []
-    cmd.iterate('(all)', 'stored.all_models.append((model))')
-    for model in set(stored.all_models):
-        print(model)
-        for chain in chains:
-            print("cartoonizing ",model,chain)
-            cartoonize_model_and_chain(color, rep, chain, model, show_bonds)
+@cmd.extend
+def cartoonize(chains, color='auto', rep='cartoon', show_bonds=False, model = "all"):
+    """draw a cartoon representation of glycans, iterate over models and all chains."""
 
-def cartoonize_model_and_chain(color, rep, chain, model, show_bonds=False):
+    obj_names = []
+    stored.all_models = []
+
+    cmd.iterate('(all)', 'stored.all_models.append((model))')
+    models = set(stored.all_models)
+
+    if model.lower() == "all":
+        for model in models:
+            for chain in chains:
+                obj_names.extend(cartoonize_model_and_chain(model, chain, color, rep, show_bonds))
+    elif model in models:
+        for chain in chains:
+            obj_names.extend(cartoonize_model_and_chain(model, chain, color, rep, show_bonds))
+    else:
+        print("model", model, "not in list of models:",models)
+        return
+    obj_names.sort()
+    for obj_name in obj_names:
+        cmd.group("azahar", obj_name)
+
+@cmd.extend
+def cartoonize_model_and_chain(model, chain, color='auto', rep='cartoon', show_bonds=False):
     """draw a cartoon representation of glycans"""
+    reps = ['cartoon', 'wire', 'beads']
+    colors = ['auto', 'green', 'red', 'blue', 'yellow', 'cyan', 'magenta',
+                   'orange', 'grey', 'black', 'white']
+
+    if rep not in reps:
+        print("Rep not understood. Available: ", reps)
+    if color not in colors:
+        print("color not understood. Available: ", colors)
+
+
     start = time.time()
     stored.ResiduesNumber = []
-    cmd.iterate('name C1 and chain '+chain+' and model '+model, 'stored.ResiduesNumber.append((resi))')
-
-    resn_list = [int(i) for i in stored.ResiduesNumber]
+    atoms = cmd.get_model(f'model {model} and chain {chain} and name C1')
+    resn_list = [int(at.resi) for at in atoms.atom]
 
     #con_matrix = writer2(bonds)
     rings = find_rings(resn_list, chain, model)
@@ -199,7 +226,6 @@ def cartoonize_model_and_chain(color, rep, chain, model, show_bonds=False):
     colors = get_colors_c1(resn_list, color, chain, model)
 
     cmd.set('suspend_updates', 'on')
-    create_start = time.time()
 
     obj = []
 
@@ -215,6 +241,7 @@ def cartoonize_model_and_chain(color, rep, chain, model, show_bonds=False):
     ## It doesn't work well with branching (1-6 is too short)
     ## It doesn't work with Glycan-protein connections.
     obj = []
+    names = []
     if show_bonds:
         bonds = get_glyco_bonds_within_chain_and_model(resn_list[0], resn_list[-1] + 1, chain, model)
         con_matrix = writer(bonds)
@@ -229,18 +256,27 @@ def cartoonize_model_and_chain(color, rep, chain, model, show_bonds=False):
                 bonds_coords[state],
                 bonds_colors[state],
                 radius)
-            cmd.load_cgo(obj, 'cgb01' + chain, state + 1)
+            name = 'cbb' + chain + "_" + model
+            names.append(name)
+            cmd.load_cgo(obj,  name ,state + 1)
 
+    #Independant objects to toggle either one on/off.
+    obj = []
     for state, coords in enumerate(rings_coords):
 
         if rep == 'beads':
             obj = beads(obj, coords, colors[state], 1.8)
         else:
             obj = hexagon(obj, coords, colors[state], rep, radius)
-        cmd.load_cgo(obj, 'cgo01'+chain, state + 1)
+
+
+        name = 'cbr' + chain + "_" + model
+        names.append(name)
+        cmd.load_cgo(obj, name, state + 1)
 
     cmd.select('glycan', 'byres name C1')
     cmd.delete('glycan')
     cmd.delete('tmp')
     cmd.set('two_sided_lighting', 1)
     cmd.set('suspend_updates', 'off')
+    return names
