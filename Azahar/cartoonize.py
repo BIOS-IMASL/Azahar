@@ -64,7 +64,6 @@ def get_bonds_coords(resn_list, matrix, chain, model):
                     state, 'model %s and chain %s and resi %s and name C%s or model %s and chain %s and resi %s and name C%s' %
                     (model, chain, bond[0], 5, model, chain, bond[2], bond[5]), 'stored.pos.append((x,y,z))')
             elif bond[5] == 6:
-                print("Exocyclic", bond)
                 cmd.iterate_state(
                     state, 'model %s and chain %s and resi %s and name C%s or model %s and chain %s and resi %s and name C%s' %
                     (model, chain, bond[0], bond[4], model, chain, bond[2], 5), 'stored.pos.append((x,y,z))')
