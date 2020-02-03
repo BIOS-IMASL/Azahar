@@ -62,7 +62,7 @@ def get_glyco_bonds(first, last):
     for res_i in range(first, last):
         # TODO In the future we should be able to deal with glyco-conjugates!
         cmd.iterate("not polymer and (neighbor resi %s and chain %s)" %
-                    res_i,
+                    (res_i, cmd.get_chains('all')),
                     'stored.nb.append((%s, int(resi), name[-1], resn))' %
                     res_i)
     return stored.nb
