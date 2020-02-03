@@ -188,6 +188,8 @@ def cylinder(obj, coords, colors, radius):
 @cmd.extend
 def cartoonize(chains, color='auto', rep='cartoon', show_bonds=False, model = "all"):
     """draw a cartoon representation of glycans, iterate over models and all chains."""
+    if not chains:
+        print('Please specify a chain')
 
     obj_names = []
     stored.all_models = []

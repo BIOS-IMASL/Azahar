@@ -252,6 +252,7 @@ def mainDialog(root=None):
     entry_chain = Tkinter.Entry(group.interior(),
                                   textvariable=chains,
                                   width=12)
+    entry_chain.insert(0, 'A')
     entry_chain.grid(row=3, column=1)
     entry_chain.configure(state='normal')
     entry_chain.update()
