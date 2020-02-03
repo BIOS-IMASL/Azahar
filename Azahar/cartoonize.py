@@ -19,7 +19,10 @@ def find_rings(resn_list, chain, model):
         ring = []
         # identify the oxygens that belong to the ring
         o_atm = cmd.get_model(f'model {model} and chain {chain} and resi {resi} and name C1 extend 1 and (resi {resi} and name O* and not name O1*)')
-        ring.append(o_atm.atom[0].name)
+        try:
+            ring.append(o_atm.atom[0].name)
+        except IndexError:
+            continue
         for carbon in range(1, 10):
             if cmd.select(
                 'tmp', 'not hydrogen and (neighbor (model %s and chain %s and resi %s and name c%s ))' %
@@ -42,9 +45,14 @@ def get_ring_coords(resn_list, matrix, chain, model):
         coords = []
         for i, resi in enumerate(resn_list):
             stored.coords = []
-            cmd.iterate_state(state, 'model %s and chain %s and resi %s and name %s' % (
+            try:
+                cmd.iterate_state(state, 'model %s and chain %s and resi %s and name %s' % (
                 model, chain, resi,  '+'.join(matrix[i])), 'stored.coords.append([x,y,z])')
-            coords.append(stored.coords)
+
+                coords.append(stored.coords)
+            except IndexError:
+                continue
+
         matrix_coords.append(coords)
     return matrix_coords
 
