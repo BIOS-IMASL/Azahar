@@ -248,11 +248,11 @@ def mainDialog(root=None):
     stored.iterchains = []
     cmd.iterate('(all)', 'stored.iterchains.append((chain))')
     all_chains = "".join(set(stored.iterchains))
-    chains.set(all_chains)
     entry_chain = Tkinter.Entry(group.interior(),
                                   textvariable=chains,
                                   width=12)
     entry_chain.insert(0, 'A')
+    chains.set(all_chains)
     entry_chain.grid(row=3, column=1)
     entry_chain.configure(state='normal')
     entry_chain.update()
