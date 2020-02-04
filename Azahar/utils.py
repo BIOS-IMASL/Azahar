@@ -54,7 +54,6 @@ def pose_from_pdb(pdb_file):
 or the atoms in your molecule have a non-standard nomenclature")
         return None, None
 
-
 def get_glyco_bonds(first, last):
     """
     Obtain glycosidic bonds from a pymol object
@@ -62,8 +61,21 @@ def get_glyco_bonds(first, last):
     stored.nb = []
     for res_i in range(first, last):
         # TODO In the future we should be able to deal with glyco-conjugates!
-        cmd.iterate("not polymer and (neighbor resi %s)" %
-                    res_i, 
+        cmd.iterate("not polymer and (neighbor resi %s and chain %s)" %
+                    (res_i, cmd.get_chains('all')),
+                    'stored.nb.append((%s, int(resi), name[-1], resn))' %
+                    res_i)
+    return stored.nb
+
+def get_glyco_bonds_within_chain_and_model(first, last, chain, model):
+    """
+    Obtain glycosidic bonds from a pymol object
+    """
+    stored.nb = []
+    for res_i in range(first, last):
+        # TODO In the future we should be able to deal with glyco-conjugates!
+        cmd.iterate("not polymer and model %s and chain %s and (model %s and chain %s and neighbor resi %s)" %
+                    (model, chain, model, chain, res_i),
                     'stored.nb.append((%s, int(resi), name[-1], resn))' %
                     res_i)
     return stored.nb
